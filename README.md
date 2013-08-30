@@ -4,7 +4,7 @@
 
 Exominer helps build a list of genes that may be used for building a
 targeted exome design for sequencing. The inputs are a list of Pubmed
-IDs and/or URIs to text files (HTML, Word, Excel should be exported to
+IDs with text files (PDF, HTML, Word, Excel have to be exported to
 plain text first). Exominer harvests gene names from these documents
 using a default symbol list with aliases. 
 
@@ -12,8 +12,13 @@ All matches are written with their sources, symbol frequencies,
 year, and user provided keywords and impact scores and written out.
 
 Exominer also exports to RDF, so that the gene symbols can be stored
-into a triple-store and link out to Bio2rdf resources, for example.
-The latter allows harvesting pathways, for example.
+into a triple-store and link out to Bio2rdf resources.  The latter
+allows harvesting pathways.
+
+Every RDF export contains full information on the origin of symbols.
+Over time designs can be compared against each other and a historical
+record is maintained. It is a good idea to store the textual versions
+of the files too.
 
 The initial symbol list with aliases can be fetched/generated from external
 sources, such as NCBI, Biomart and/or Bio2rdf. Some example scripts
