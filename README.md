@@ -2,7 +2,22 @@
 
 [![Build Status](https://secure.travis-ci.org/pjotrp/bioruby-exominer.png)](http://travis-ci.org/pjotrp/bioruby-exominer)
 
-Full description goes here
+Exominer helps build a list of genes that may be used for building a
+targeted exome design for sequencing. The inputs are a list of Pubmed
+IDs and/or URIs to text files (HTML, Word, Excel should be exported to
+plain text first). Exominer harvests gene names from these documents
+using a default symbol list with aliases. 
+
+All matches are written with their sources, symbol frequencies,
+year, and user provided keywords and impact scores and written out.
+
+Exominer also exports to RDF, so that the gene symbols can be stored
+into a triple-store and link out to Bio2rdf resources, for example.
+The latter allows harvesting pathways, for example.
+
+The initial symbol list with aliases can be fetched/generated from external
+sources, such as NCBI, Biomart and/or Bio2rdf. Some example scripts
+are in ./scripts
 
 Note: this software is under active development!
 
