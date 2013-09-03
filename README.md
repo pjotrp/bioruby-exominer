@@ -41,23 +41,29 @@ NCBI provides a current list of used symbols in one large file at
 
   ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz.
 
-Fetch this file and unpack it. Note: do not check this file into the
-repository! Create the symbol/alias list for exominer with
+Fetch this file and unpack it. Note: this is a 1.4Gb file; do not
+check this file into the repository! Create the symbol/alias list for
+exominer with
 
   ncbi_exominer_symbols gene_info > ncbi_symbols.tab
+
+That makes for some 12 million symbols + aliases(!)
 
 Next to the ncbi_symbols.tab file a frequency file is generated named
 ncbi_exominer_symbols.freq, which contains
 
-  Z: 5
-  y: 1
-  d: 3
-  v: 1
-  x: 85
-  k: 263
-  -.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefgiklmnoprstuvxy
+  p: 1255137
+  L: 1907635
+  e: 1334974
+  u: 465711
+  D: 2110781
+  n: 533637
+  _: 11942258
 
-apparently some gene symbols include dashes and dots.
+   "#%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_`abcdefghijklmnopqrstuvwxyz{}
+
+apparently some gene symbols and gene names include dashes and dots
+and other characters. Some gene names even contain spaces.
 
 ### Making a text file of your document
 
@@ -67,7 +73,8 @@ example can be made with
 
   lynx --dump http://www.nature.com/nature/journal/v490/n7418/full/nature11412.html >> tcga_bc.txt
 
-Note: do not check this file into the repository!
+Note: do not check this file into the repository! Nature publishing
+group will not be amused.
 
 ### Using Exominer
 

@@ -8,15 +8,22 @@
 
 require 'yaml'
 
+# Returns true or false
+def valid_symbol s
+  s = s.strip
+  return false if s =~ /^\d+$/  # drop all digit id's
+  $stderr.print "Symbol contains a space! <"+s+">\n" if s =~ /\s/
+  true
+end
+
 module Freq
-
   def Freq::to_s freq
-    print freq.to_yaml
+    buf = freq.to_yaml + "\n"
     freq.keys.sort.each do |c|
-      print c
+      buf += c
     end
+    buf
   end
-
 end
 
 freq = {}
@@ -32,10 +39,10 @@ ARGF.each_line do | line |
   symbol = a[2]
   next if symbol == 'NEWENTRY' or symbol == '-'
   # Skip gene names that are numbers only
-  next if symbol =~ /^\d+$/
+  next if not valid_symbol(symbol)
   name = a[3]
   aliases = a[4]
-  if name != '-' and name != symbol and name !~ /^\d+$/
+  if name != '-' and name != symbol and valid_symbol(name)
     if aliases == '-'
       aliases = name
     else
@@ -48,7 +55,7 @@ ARGF.each_line do | line |
     else
       as1 = aliases.split(/\|/)
       # Skip gene names that are numbers only
-      as2 = as1.delete_if { |a| a =~/^\d+$/ }
+      as2 = as1.delete_if { |a| not valid_symbol(a) }
       as2.uniq.join('|')
     end
   descr = a[8]
