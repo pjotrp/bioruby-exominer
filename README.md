@@ -78,6 +78,8 @@ group will not be amused.
 
 ### Using Exominer
 
+Pass the symbol file on the command line and pipe in the textual file, e.g.
+
   exominer -s ncbi_symbols.tab < tcga_bc.txt 
 
 ## Usage

@@ -6,7 +6,7 @@
 #
 # Copyright (C) 2013 Pjotr Prins <pjotr.prins@thebird.nl>
 
-USAGE = "Describe bio-exominer"
+USAGE = "exominer takes a symbol file and parses the piped data for gene symbols"
 
 gempath = File.dirname(File.dirname(__FILE__))
 $: << File.join(gempath,'lib')
@@ -83,8 +83,8 @@ begin
   # Log parsed options and remaining arguments in ARGV
   # logger.info [options, ARGV]
 
-  # TODO: your code here
-  # use options for your logic
+
+
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message
 end
