@@ -51,5 +51,6 @@ pkg
 Gemfile.lock
 *.gemspec
 
-test/data/input/tcga_bc.txt 
+test/tmp
 gene_info*
+notes.txt
