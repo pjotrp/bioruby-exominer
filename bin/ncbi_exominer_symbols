@@ -1,0 +1,72 @@
+#! /usr/bin/env ruby
+#
+# Convert NCBI gene_info to symbol file and print used letter
+# frequencies. Note: all symbols that are numbers are removed.
+#
+# Copyright (C) 2013 Pjotr Prins <pjotr.prins@thebird.nl> 
+#
+
+require 'yaml'
+
+module Freq
+
+  def Freq::to_s freq
+    print freq.to_yaml
+    freq.keys.sort.each do |c|
+      print c
+    end
+  end
+
+end
+
+freq = {}
+
+counter = 0
+
+ARGF.each_line do | line |
+  counter += 1
+  $stderr.print "." if counter % 100_000 == 0
+
+  next if line =~ /^#/
+  a = line.strip.split(/\t/)
+  symbol = a[2]
+  next if symbol == 'NEWENTRY' or symbol == '-'
+  # Skip gene names that are numbers only
+  next if symbol =~ /^\d+$/
+  name = a[3]
+  aliases = a[4]
+  if name != '-' and name != symbol and name !~ /^\d+$/
+    if aliases == '-'
+      aliases = name
+    else
+      aliases += '|'+name
+    end
+  end
+  aliases =
+    if aliases == '-'
+      'NA'
+    else
+      as1 = aliases.split(/\|/)
+      # Skip gene names that are numbers only
+      as2 = as1.delete_if { |a| a =~/^\d+$/ }
+      as2.uniq.join('|')
+    end
+  descr = a[8]
+  descr = '' if descr == '-'
+  print symbol,"\t",aliases,"\t",descr,"\n"
+  # Add stats
+  cs = name.scan(/./)
+  if aliases != 'NA'
+    cs += aliases.scan(/./) - ['|']
+  end
+  cs.each do |c|
+    freq[c] = 0 if not freq[c]
+    freq[c] += 1
+  end
+end
+
+File.open('ncbi_exominer_symbols.freq','w') do |f|
+  f.print(Freq::to_s(freq))
+end
+
+

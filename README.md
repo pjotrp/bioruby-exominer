@@ -33,6 +33,46 @@ Note: this software is under active development!
 gem install bio-exominer
 ```
 
+## The command line interface (CLI)
+
+### Using NCBI symbols
+
+NCBI provides a current list of used symbols in one large file at
+
+  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz.
+
+Fetch this file and unpack it. Note: do not check this file into the
+repository! Create the symbol/alias list for exominer with
+
+  ncbi_exominer_symbols gene_info > ncbi_symbols.tab
+
+Next to the ncbi_symbols.tab file a frequency file is generated named
+ncbi_exominer_symbols.freq, which contains
+
+  Z: 5
+  y: 1
+  d: 3
+  v: 1
+  x: 85
+  k: 263
+  -.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefgiklmnoprstuvxy
+
+apparently some gene symbols include dashes and dots.
+
+### Making a text file of your document
+
+Save HTML/Word/Excel/PDF files in a textual format. Command line
+tools, such as lynx, antiword and pdftotext exist for this purpose. An
+example can be made with
+
+  lynx --dump http://www.nature.com/nature/journal/v490/n7418/full/nature11412.html >> tcga_bc.txt
+
+Note: do not check this file into the repository!
+
+### Using Exominer
+
+  exominer -s ncbi_symbols.tab < tcga_bc.txt 
+
 ## Usage
 
 ```ruby

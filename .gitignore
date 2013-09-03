@@ -54,3 +54,6 @@ Gemfile.lock
 test/tmp
 gene_info*
 notes.txt
+tcga_bc.txt
+*.tab
+*.freq
