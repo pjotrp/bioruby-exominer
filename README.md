@@ -82,11 +82,29 @@ Pass the symbol file on the command line and pipe in the textual file, e.g.
 
   exominer -s ncbi_symbols.tab < tcga_bc.txt 
 
-## Usage
+This results in a list of symbols and aliases found in the paper, with
+their tally. For example
 
-```ruby
-require 'bio-exominer'
-```
+    35      FOXA1   forkhead box A1
+    36      cas     CRISPR associated Cas2 family protein
+    36      AKT1    v-akt murine thymoma viral oncogene homolog 1
+    37      BRCA2   hypothetical protein
+    37      BRAF    v-raf murine sarcoma viral oncogene homolog B1
+    37      BRCA1   breast cancer 1, early onset
+    38      A       replication gene A protein
+    38      AFF2    Ady2-Fun34 like Family, similar to S. cerevisiae FUN34 (YNR002C) and ADY2 (YCR010C); similar to Yarrowia glyoxalate pathway regulator, possible transmembrane acetate facilitator/sensor
+    39      PDGFRA  platelet-derived growth factor receptor, alpha polypeptide
+    39      RAD51C  Rad51 DNA recombinase 3
+    39      MAP3K1  mitogen-activated protein kinase kinase kinase 1, E3 ubiquitin protein ligase
+    41      AKT3    v-akt murine thymoma viral oncogene homolog 3 (protein kinase B, gamma)
+    43      ATM     hypothetical protein
+    90      can     carbonic anhydrase 2 Can
+
+  A total of 12774630 symbols and 3201281 aliases scanned.
+
+This is not an authorative list, but there should be few false
+negatives. Obviously the last one is a false positive, but these
+should be easy to spot and weed out.
 
 ## Project home page
 

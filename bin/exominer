@@ -90,11 +90,15 @@ begin
   buf = ARGF.read
   tokens = TextParser::tokenize(buf)
 
+  symbol_count = 0
+  alias_count = 0
   symbol_matches = {}
   alias_matches = {}
   info = {}
   Symbols::each(options[:symbols]) do | symbol,aliases,descr |
     # p [symbol,aliases,descr]
+    symbol_count += 1
+    alias_count += aliases.size if aliases
     if tokens[symbol]
       symbol_matches[symbol] ||= 0
       symbol_matches[symbol] += 1
@@ -119,6 +123,7 @@ begin
   symbol_matches.sort_by{|k,v| v}.each do | k,v |
     print v,"\t",k,"\t",info[k][:descr],"\n"
   end
+  print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
   print "\nDone!\n"
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message
