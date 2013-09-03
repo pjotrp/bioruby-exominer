@@ -67,6 +67,11 @@ opts = OptionParser.new do |o|
   end
 end
 
+require 'bio-exominer/textparser'
+require 'bio-exominer/symbols'
+
+include BioExominer
+
 begin
   opts.parse!(ARGV)
 
@@ -80,10 +85,15 @@ begin
   # Log parsed options and remaining arguments in ARGV
   # logger.info [options, ARGV]
 
-  ARGF.each_line do |line|
-    p line
-  end
+  print "\nLoading text and tokenizing..."
+  buf = ARGF.read
+  tokens = TextParser::tokenize(buf)
 
+  p tokens
+  Symbols::each(options[:symbols]) do | symbols |
+    # do nothing
+  end
+  print "\nDone!\n"
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message
 end

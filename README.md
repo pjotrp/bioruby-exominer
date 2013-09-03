@@ -63,7 +63,7 @@ ncbi_exominer_symbols.freq, which contains
    "#%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_`abcdefghijklmnopqrstuvwxyz{}
 
 apparently some gene symbols and gene names include dashes and dots
-and other characters. Some gene names even contain spaces.
+and other characters. Some gene names even contain spaces - we skip these.
 
 ### Making a text file of your document
 
