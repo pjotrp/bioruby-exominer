@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# BioRuby bio-exominer Plugin BioExominer
+# BioRuby exominer Plugin BioExominer
 # Author:: Pjotr Prins
 # Copyright:: 2013
 #
@@ -15,7 +15,7 @@ VERSION_FILENAME=File.join(gempath,'VERSION')
 version = File.new(VERSION_FILENAME).read.chomp
 
 # print banner
-print "bio-exominer #{version} (biogem Ruby #{RUBY_VERSION}) by Pjotr Prins 2013\n"
+print "exominer #{version} (biogem Ruby #{RUBY_VERSION}) by Pjotr Prins 2013\n"
 
 if ARGV.size == 0
   print USAGE
@@ -26,24 +26,17 @@ require 'optparse'
 
 # Uncomment when using the bio-logger 
 # require 'bio-logger'
-# log = Bio::Log::LoggerPlus.new 'bio-exominer'
+# log = Bio::Log::LoggerPlus.new 'exominer'
 # log.outputters = Bio::Log::Outputter.stderr 
 # Bio::Log::CLI.logger('stderr')
 # Bio::Log::CLI.trace('info')
 
-options = {:example_switch=>false,:show_help=>false}
+options = {:show_help=>false}
 opts = OptionParser.new do |o|
-  o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g. #{File.basename($0)} test.txt"
+  o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g. #{File.basename($0)} -s ncbi_symbols.tab < test.txt"
 
-  o.on('--example_parameter [EXAMPLE_PARAMETER]', 'TODO: put a description for the PARAMETER') do |example_parameter|
-    # TODO: your logic here, below an example
-    options[:example_parameter] = 'this is a parameter'
-  end
-  
-  o.separator ""
-  o.on("--switch-example", 'TODO: put a description for the SWITCH') do
-    # TODO: your logic here, below an example
-    self[:example_switch] = true
+  o.on("-s fn","--symbols fn", 'Symbol file') do |fn|
+    options[:symbols] = fn
   end
 
   # Uncomment the following when using the bio-logger 
@@ -77,13 +70,19 @@ end
 begin
   opts.parse!(ARGV)
 
+  print opts if options[:show_help]
+
+  p options
+
   # Uncomment when using the bio-logger
-  # Bio::Log::CLI.configure('bio-exominer')
-  # logger = Bio::Log::LoggerPlus['bio-exominer']
+  # Bio::Log::CLI.configure('exominer')
+  # logger = Bio::Log::LoggerPlus['exominer']
   # Log parsed options and remaining arguments in ARGV
   # logger.info [options, ARGV]
 
-
+  ARGF.each_line do |line|
+    p line
+  end
 
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message
