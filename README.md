@@ -22,7 +22,8 @@ of the files too.
 
 The initial symbol list with aliases can be fetched/generated from external
 sources, such as NCBI, Biomart and/or Bio2rdf. Some example scripts
-are in ./scripts
+are in ./scripts. For a more specific treatment of design and
+input/output of exominer, see ./doc/design.md.
 
 Note: this software is under active development!
 
@@ -38,17 +39,12 @@ gem install bio-exominer
 require 'bio-exominer'
 ```
 
-The API doc is online. For more code examples see the test files in
-the source tree.
-        
 ## Project home page
 
 Information on the source tree, documentation, examples, issues and
 how to contribute, see
 
   http://github.com/pjotrp/bioruby-exominer
-
-The BioRuby community is on IRC server: irc.freenode.org, channel: #bioruby.
 
 ## Cite
 
