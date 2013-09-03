@@ -69,6 +69,7 @@ end
 
 require 'bio-exominer/textparser'
 require 'bio-exominer/symbols'
+require 'yaml'
 
 include BioExominer
 
@@ -89,9 +90,34 @@ begin
   buf = ARGF.read
   tokens = TextParser::tokenize(buf)
 
-  p tokens
-  Symbols::each(options[:symbols]) do | symbols |
-    # do nothing
+  symbol_matches = {}
+  alias_matches = {}
+  info = {}
+  Symbols::each(options[:symbols]) do | symbol,aliases,descr |
+    # p [symbol,aliases,descr]
+    if tokens[symbol]
+      symbol_matches[symbol] ||= 0
+      symbol_matches[symbol] += 1
+      info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr }
+    end  
+    if aliases
+      aliases.each do | word |
+        full = word + ' (' + symbol + ')'
+        if tokens[word]
+          alias_matches[word] ||= 0
+          alias_matches[word] += 1
+          info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr }
+        end
+      end
+    end
+  end
+  print "\nMatching symbol aliases:\n"
+  alias_matches.sort_by{|k,v| v}.each do | k,v |
+    print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n"
+  end
+  print "\nMatching symbols:\n"
+  symbol_matches.sort_by{|k,v| v}.each do | k,v |
+    print v,"\t",k,"\t",info[k][:descr],"\n"
   end
   print "\nDone!\n"
 rescue OptionParser::InvalidOption => e
