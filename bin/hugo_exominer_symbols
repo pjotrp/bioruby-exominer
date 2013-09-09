@@ -32,37 +32,32 @@ counter = 0
 
 ARGF.each_line do | line |
   counter += 1
-  $stderr.print "." if counter % 100_000 == 0
+  $stderr.print "." if counter % 10_000 == 0
 
-  next if line =~ /^#/
+  next if line =~ /^HGNC ID/
   a = line.strip.split(/\t/)
-  symbol = a[2]
-  next if symbol == 'NEWENTRY' or symbol == '-'
-  # Skip gene names that are numbers only
+  symbol = a[1]
   next if not valid_symbol(symbol)
-  name = a[3]
-  aliases = a[4]
-  if name != '-' and name != symbol and valid_symbol(name)
-    if aliases == '-'
-      aliases = name
-    else
-      aliases += '|'+name
-    end
-  end
-  aliases =
-    if aliases == '-'
-      'NA'
-    else
-      as1 = aliases.split(/\|/)
-      # Skip gene names that are numbers only
-      as2 = as1.delete_if { |a| not valid_symbol(a) }
-      as2.uniq.join('|')
-    end
-  descr = a[8]
+  name = a[2]
+  oldnames = nil
+  oldnames = a[4].strip.split(/\s?,\s?/) if a.size > 4
+  aliases = nil
+  aliases = a[6].strip.split(/\s?,\s?/) if a.size > 6
+  # p [a[4],a[6]]
+  as = []
+  as = aliases if aliases
+  as += oldnames if oldnames
+  as.reject! { |c| c.empty? }
+  aliases = if as.size == 0
+              'NA'
+            else
+              as.uniq.join('|')
+            end
+  descr = a[2]
   descr = '' if descr == '-'
   print symbol,"\t",aliases,"\t",descr,"\n"
   # Add stats
-  cs = name.scan(/./)
+  cs = symbol.scan(/./)
   if aliases != 'NA'
     cs += aliases.scan(/./) - ['|']
   end
@@ -72,7 +67,7 @@ ARGF.each_line do | line |
   end
 end
 
-File.open('ncbi_exominer_symbols.freq','w') do |f|
+File.open('hugo_exominer_symbols.freq','w') do |f|
   f.print(Freq::to_s(freq))
 end
 

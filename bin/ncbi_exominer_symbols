@@ -62,7 +62,7 @@ ARGF.each_line do | line |
   descr = '' if descr == '-'
   print symbol,"\t",aliases,"\t",descr,"\n"
   # Add stats
-  cs = name.scan(/./)
+  cs = symbol.scan(/./)
   if aliases != 'NA'
     cs += aliases.scan(/./) - ['|']
   end
