@@ -31,14 +31,14 @@ require 'optparse'
 # Bio::Log::CLI.logger('stderr')
 # Bio::Log::CLI.trace('info')
 
-options = {:show_help=>false}
+options = { show_help: false, symbols: []}
 opts = OptionParser.new do |o|
   o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g.  #{File.basename($0)} -s ncbi_symbols.tab --rdf < test.txt"
 
   o.on("--rdf", "Generate RDF") do |rdf|
   end
   o.on("-s","--symbols fn", 'Symbol file fn') do |fn|
-    options[:symbols] = fn
+    options[:symbols] += [fn]
   end
   o.on("-i","--ignore fn", 'Ignore symbols in fn') do |fn|
     options[:ignore] = fn
@@ -105,22 +105,24 @@ begin
   symbol_matches = {}
   alias_matches = {}
   info = {}
-  Symbols::each(options[:symbols]) do | symbol,aliases,descr |
-    # p [symbol,aliases,descr]
-    symbol_count += 1
-    alias_count += aliases.size if aliases
-    if tokens[symbol]
-      symbol_matches[symbol] ||= 0
-      symbol_matches[symbol] += 1
-      info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr }
-    end  
-    if aliases
-      aliases.each do | word |
-        full = word + ' (' + symbol + ')'
-        if tokens[word]
-          alias_matches[word] ||= 0
-          alias_matches[word] += 1
-          info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr }
+  options[:symbols].each do |symbolfn|
+    Symbols::each(symbolfn) do | symbol,aliases,descr |
+      # p [symbol,aliases,descr]
+      symbol_count += 1
+      alias_count += aliases.size if aliases
+      if tokens[symbol]
+        symbol_matches[symbol] ||= 0
+        symbol_matches[symbol] += 1
+        info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
+      end  
+      if aliases
+        aliases.each do | word |
+          full = word + ' (' + symbol + ')'
+          if tokens[word]
+            alias_matches[word] ||= 0
+            alias_matches[word] += 1
+            info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
+          end
         end
       end
     end

@@ -98,7 +98,7 @@ documents.
 ### Adding HUGO symbols and aliases
 
 To make sure all HUGO symbols are added, download the all symbols file
-through 
+and parse through 
 
 ```sh
   wget ftp://ftp.ebi.ac.uk/pub/databases/genenames/reference_genome_set.txt.gz
@@ -121,7 +121,7 @@ group will not be amused.
 
 Pass the symbol file on the command line and pipe in the textual file, e.g.
 
-  exominer -s ncbi_symbols.tab < tcga_bc.txt 
+  exominer -s ncbi_symbols.tab -s hugo_symbols.tab < tcga_bc.txt 
 
 This results in a list of symbols and aliases found in the paper, with
 their tally. For example
@@ -148,7 +148,8 @@ list of symbols and aliases there should be few false negatives.
 Obviously the last one is a false positive, but these should be easy
 to spot and weed out. The idea is to end up with a list of candidate
 exome targets. So the possible next step (when not using using a
-triple-store) allows for subtracting symbols already in a design (NYI):
+triple-store) allows for subtracting symbols already in a design (not
+yet implemented/NYI):
 
   exominer -s ncbi_symbols.tab --ignore list.tab < tcga_bc.txt
 
