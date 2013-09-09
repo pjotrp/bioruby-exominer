@@ -7,6 +7,10 @@ targeted exome design for sequencing. The inputs are a list of Pubmed
 IDs with text files (PDF, HTML, Word, Excel have to be exported to
 plain text first). Exominer harvests gene names from these documents
 using a default symbol list with aliases. 
+Ideally, all texts only contain HUGO symbols, the over 30K standardized
+gene names by the HUGO Gene Nomenclature Committee (HGNC). Exominer
+does that, but it also mines for the 12 odd million symbols and aliases that
+are known through NCBI.
 
 All matches are written with their sources, symbol frequencies,
 year, and user provided keywords and impact scores and written out.
@@ -33,11 +37,29 @@ Note: this software is under active development!
 gem install bio-exominer
 ```
 
-## The command line interface (CLI)
+### Using exominer with a triple-store
 
-### Using NCBI symbols
+If you intend to use exominer with a triple-store you need to install
+one. In principle you can use bio-rdf with any RDF triple store.
+Instructions for installing [4store](http://4store.org/) can be found on
+[bioruby-rdf](https://github.com/pjotrp/bioruby-rdf). You can add
+a new triple-store with
 
-NCBI provides a current list of used symbols in one large file at
+```sh
+4s-backend-setup design
+4s-backend design
+4s-httpd -p 8081 design
+```
+
+and check the webserver is running on http://localhost:8081/status/.
+Again, check bioruby-rdf for instructions on installing 4store and
+sparql-query and examples.
+
+## Command line interface (CLI)
+
+### Adding NCBI symbols and aliases
+
+NCBI provides a current list of all NCBI used symbols in one large file at
 
   ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz.
 
@@ -50,7 +72,8 @@ exominer with
 That makes for some 12 million symbols + aliases(!)
 
 Next to the ncbi_symbols.tab file a frequency file is generated named
-ncbi_exominer_symbols.freq, which contains
+ncbi_exominer_symbols.freq, which contains the frequency of every
+character used in symbol names:
 
   p: 1255137
   L: 1907635
@@ -60,23 +83,41 @@ ncbi_exominer_symbols.freq, which contains
   n: 533637
   _: 11942258
 
+and a list of all characters
+
    "#%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_`abcdefghijklmnopqrstuvwxyz{}
 
-apparently some gene symbols and gene names include dashes and dots
-and other characters. Some gene names even contain spaces - we skip these.
+In this list some gene symbols and gene names include dashes and dots
+and other characters. Some gene names even contain spaces - we skip
+these for further processing.
+
+The millions of NCBI symbols and aliases we do not all write to a
+triple-store. We only store those symbols that get mined from the
+documents. 
+
+### Adding HUGO symbols and aliases
+
+To make sure all HUGO symbols are added, download the all symbols file
+through 
+
+```sh
+  wget ftp://ftp.ebi.ac.uk/pub/databases/genenames/reference_genome_set.txt.gz
+  gzip -d reference_genome_set.txt.gz
+  hugo_exominer_symbols reference_genome_set.txt > hugo_symbols.tab
+```
 
 ### Making a text file of your document
 
 Save HTML/Word/Excel/PDF files in a textual format. Command line
 tools, such as lynx, antiword and pdftotext exist for this purpose. An
-example can be made with
+example of a textual version of a Nature paper can be made with
 
   lynx --dump http://www.nature.com/nature/journal/v490/n7418/full/nature11412.html >> tcga_bc.txt
 
-Note: do not check this file into the repository! Nature publishing
+Warning: do not check this file into the repository! Nature publishing
 group will not be amused.
 
-### Using Exominer
+### Using Exominer to mine a text file for symbols
 
 Pass the symbol file on the command line and pipe in the textual file, e.g.
 
@@ -100,11 +141,78 @@ their tally. For example
     43      ATM     hypothetical protein
     90      can     carbonic anhydrase 2 Can
 
-  A total of 12774630 symbols and 3201281 aliases scanned.
+  Out of a total of 12,774,630 symbols and 3,201,281 aliases scanned(!)
 
-This is not an authorative list, but there should be few false
-negatives. Obviously the last one is a false positive, but these
-should be easy to spot and weed out.
+This is not an authorative list but because it is such a comprehensive
+list of symbols and aliases there should be few false negatives.
+Obviously the last one is a false positive, but these should be easy
+to spot and weed out. The idea is to end up with a list of candidate
+exome targets. So the possible next step (when not using using a
+triple-store) allows for subtracting symbols already in a design (NYI):
+
+  exominer -s ncbi_symbols.tab --ignore list.tab < tcga_bc.txt
+
+where list.tab contains a list of symbols to ignore. These symbols
+*with* their aliases are skipped in the text mining step. 
+
+This can be useful when mining a paper at a time. The better route,
+however, is by adding the exome list and accompanying design to a
+triple store for further exploration.
+
+## Using exominer with a triple-store
+
+exominer supports RDF! This means that you can use a triple-store as a
+'back-end' and add results of multiple runs incrementally. For every
+symbol it is possible to track back the publication and even mine
+extra information, such as publication date, journal type, and whether
+a symbol exists in one or more stored designs. We can even link
+aliases to Hugo symbols and link-out
+and fetch gene information, such as the length of the nucleotide
+sequence. Welcome to the world of the semantic web!
+
+When parsing a publication or other resource we want to refer the
+result set to that. Ideally a DOI is used which can be turned into a
+URI through http://crossref.org/, e.g. doi:10.1038/171737a0 becomes 
+http://dx.doi.org/10.1038/171737a0 and can be queried, as explained
+[here](http://inkdroid.org/journal/2011/04/25/dois-as-linked-data/).
+
+If no URI exists, one can use a URL to a web publication, or even
+simply the file name with the year and some tags for describing
+the target of the publication, such as species or disease type. 
+
+The DOI describing the file:
+
+  exominer --rdf -s ncbi_symbols.tab --doi doi:10.1038/nature11412 < tcga_bc.txt 
+
+allows for mining title and publication date for every
+symbol found. To add some meta information you could add semi-colon
+separated tags
+
+  exominer --rdf -s ncbi_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+which helps mining data later on. If no doi exists, you may just add
+title and year:
+
+  exominer --rdf -s ncbi_symbols.tab --tag 'title=Comprehensive molecular portraits of human breast tumours' \
+    --tag 'year=2012;species=human;type=breast cancer' < tcga_bc.txt 
+
+multiple tags are also allowed.
+
+exominer generates RDF which can be added to a triple-store. If you
+want to add a design (old or new) simply use something like
+
+  exominer --rdf -s ncbi_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
+
+These commands create turtle RDF with the --rdf switch. Simple pipe
+the output into the triple-store with
+
+  curl -T file.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/exominer.rdf
+
+The URI can be a little more descriptive, e.g.:
+
+  curl -T design2012.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/design2012.rdf
+
+## Mining gene symbols with SPARQL
+
 
 ## Project home page
 

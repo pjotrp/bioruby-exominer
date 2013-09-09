@@ -57,3 +57,4 @@ notes.txt
 tcga_bc.txt
 *.tab
 *.freq
+reference_genome_set.txt

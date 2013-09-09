@@ -33,11 +33,18 @@ require 'optparse'
 
 options = {:show_help=>false}
 opts = OptionParser.new do |o|
-  o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g. #{File.basename($0)} -s ncbi_symbols.tab < test.txt"
+  o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g.  #{File.basename($0)} -s ncbi_symbols.tab --rdf < test.txt"
 
-  o.on("-s fn","--symbols fn", 'Symbol file') do |fn|
+  o.on("--rdf", "Generate RDF") do |rdf|
+  end
+  o.on("-s","--symbols fn", 'Symbol file fn') do |fn|
     options[:symbols] = fn
   end
+  o.on("-i","--ignore fn", 'Ignore symbols in fn') do |fn|
+    options[:ignore] = fn
+  end
+  
+
 
   # Uncomment the following when using the bio-logger 
   # o.separator ""
@@ -76,7 +83,10 @@ include BioExominer
 begin
   opts.parse!(ARGV)
 
-  print opts if options[:show_help]
+  if options[:show_help]
+    print opts 
+    exit 1
+  end
 
   p options
 
