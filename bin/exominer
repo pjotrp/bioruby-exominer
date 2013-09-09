@@ -47,6 +47,9 @@ opts = OptionParser.new do |o|
   o.on("-i","--ignore fn", 'Ignore symbols in fn') do |fn|
     options[:ignore] = fn
   end
+  o.on("--doi doi", 'DOI') do |doi|
+    options[:doi] = doi
+  end
   o.on("--tag string", 'Tag string') do |tag|
     tags = {}
     ts = tag.split(/\s?;\s?/)
@@ -102,9 +105,10 @@ begin
   $stderr.print options
 
   # Create unique name for the resultset
+  doi  = options[:doi]
   name = options[:name]
   name = options[:tags][:name] if not name and options[:tags][:name]
-  name = options[:doi] if not name
+  name = doi if not name and doi
   name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
 
   # Uncomment when using the bio-logger
@@ -153,8 +157,23 @@ begin
 @prefix : <http://biobeat.org/rdf/exominer/ns#>  .
 
 HEADER
+    print ":#{name} :doi #{doi} . \n" if doi
     symbol_matches.each do | symbol, freq |
-      print ":#{symbol} :freq #{freq} .\n"
+      match_info = info[symbol]
+      is_hugo = match_info[:symbolfn] =~ /hugo/i
+      symbolref = symbol + '_' + name
+      symboluri =
+        if is_hugo
+          # http://bio2rdf.org/hugo:RAD51C
+          "http://identifiers.org/hgnc.symbol/"+symbol
+        else
+          symbol
+        end
+      print ":#{symbolref} a #{symboluri} .\n"
+      print ":#{symbolref} :appears_in :#{name} .\n"
+      print ":#{symbolref} :frequency #{freq} .\n"
+      print ":#{symbol} rdf:comment \"#{info[symbol][:descr]}\" .\n"
+      print "\n"
     end
   else
     print "\nMatching symbol aliases:\n"
