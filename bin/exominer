@@ -103,6 +103,7 @@ begin
 
   # Create unique name for the resultset
   name = options[:name]
+  name = options[:tags[:name]] if not name and options[:tags[:name]]
   name = options[:doi] if not name
   name = 'anon' if not name
 
