@@ -15,7 +15,7 @@ VERSION_FILENAME=File.join(gempath,'VERSION')
 version = File.new(VERSION_FILENAME).read.chomp
 
 # print banner
-print "exominer #{version} (biogem Ruby #{RUBY_VERSION}) by Pjotr Prins 2013\n"
+$stderr.print "exominer #{version} (biogem Ruby #{RUBY_VERSION}) by Pjotr Prins 2013\n"
 
 if ARGV.size == 0
   print USAGE
@@ -35,7 +35,8 @@ options = { show_help: false, symbols: []}
 opts = OptionParser.new do |o|
   o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g.  #{File.basename($0)} -s ncbi_symbols.tab --rdf < test.txt"
 
-  o.on("--rdf", "Generate RDF") do |rdf|
+  o.on("--rdf", "Generate RDF") do |b|
+    options[:rdf] = true
   end
   o.on("-s","--symbols fn", 'Symbol file fn') do |fn|
     options[:symbols] += [fn]
@@ -44,8 +45,6 @@ opts = OptionParser.new do |o|
     options[:ignore] = fn
   end
   
-
-
   # Uncomment the following when using the bio-logger 
   # o.separator ""
   # o.on("--logger filename",String,"Log to file (default stderr)") do | name |
@@ -88,7 +87,7 @@ begin
     exit 1
   end
 
-  p options
+  $stderr.print options
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
@@ -96,7 +95,7 @@ begin
   # Log parsed options and remaining arguments in ARGV
   # logger.info [options, ARGV]
 
-  print "\nLoading text and tokenizing..."
+  $stderr.print "\nLoading text and tokenizing..."
   buf = ARGF.read
   tokens = TextParser::tokenize(buf)
 
@@ -127,16 +126,27 @@ begin
       end
     end
   end
-  print "\nMatching symbol aliases:\n"
-  alias_matches.sort_by{|k,v| v}.each do | k,v |
-    print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n"
+  if options[:rdf]
+    # Write RDF!
+    print <<HEADER
+
+# RDF output by bio-exominer https://github.com/pjotrp/bioruby-exominer
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://biobeat.org/rdf/exominer/ns#>  .
+
+HEADER
+  else
+    print "\nMatching symbol aliases:\n"
+    alias_matches.sort_by{|k,v| v}.each do | k,v |
+      print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n"
+    end
+    print "\nMatching symbols:\n"
+    symbol_matches.sort_by{|k,v| v}.each do | k,v |
+      print v,"\t",k,"\t",info[k][:descr],"\n"
+    end
   end
-  print "\nMatching symbols:\n"
-  symbol_matches.sort_by{|k,v| v}.each do | k,v |
-    print v,"\t",k,"\t",info[k][:descr],"\n"
-  end
-  print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
-  print "\nDone!\n"
+  $stderr.print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
+  $stderr.print "\nDone!\n"
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message
 end
