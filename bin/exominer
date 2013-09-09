@@ -126,8 +126,11 @@ begin
   symbol_matches = {}
   alias_matches = {}
   info = {}
+  hugo = {}
   options[:symbols].each do |symbolfn|
+    is_hugo = symbolfn =~ /hugo/i
     Symbols::each(symbolfn) do | symbol,aliases,descr |
+      hugo[symbol] = true
       # p [symbol,aliases,descr]
       symbol_count += 1
       alias_count += aliases.size if aliases
@@ -160,14 +163,13 @@ HEADER
     print ":#{name} :doi #{doi} . \n" if doi
     symbol_matches.each do | symbol, freq |
       match_info = info[symbol]
-      is_hugo = match_info[:symbolfn] =~ /hugo/i
       symbolref = symbol + '_' + name
       symboluri =
-        if is_hugo
+        if hugo[symbol]
           # http://bio2rdf.org/hugo:RAD51C
           "http://identifiers.org/hgnc.symbol/"+symbol
         else
-          symbol
+          "http://bio2rdf.org/homologene:"+symbol
         end
       print ":#{symbolref} a #{symboluri} .\n"
       print ":#{symbolref} :appears_in :#{name} .\n"

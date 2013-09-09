@@ -183,13 +183,16 @@ the target of the publication, such as species or disease type.
 
 The DOI describing the file:
 
-  exominer --rdf -s ncbi_symbols.tab --doi doi:10.1038/nature11412 < tcga_bc.txt 
+  exominer --rdf -s ncbi_symbols.tab -s hugo_symbols.tab \
+    --doi doi:10.1038/nature11412 < tcga_bc.txt 
 
 allows for mining title and publication date for every
 symbol found. To add some meta information you could add semi-colon
 separated tags
 
-  exominer --rdf -s ncbi_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+  exominer --rdf -s ncbi_symbols.tab -s hugo_symbols.tab \
+    --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+
 which helps mining data later on. If no doi exists, you may just add
 title and year:
 
@@ -201,7 +204,7 @@ multiple tags are also allowed.
 exominer generates RDF which can be added to a triple-store. If you
 want to add a design (old or new) simply use something like
 
-  exominer --rdf -s ncbi_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
+  exominer --rdf -s hugo_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
 
 These commands create turtle RDF with the --rdf switch. Simply pipe
 the output into the triple-store with
@@ -216,10 +219,25 @@ Finally, to support multiple searches and make it easier to
 dereference sources you can supply a unique name to each result set
 with the --name switch. E.g.
 
-  exominer --rdf --name tcga_bc -s ncbi_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+  exominer --rdf --name tcga_bc -s ncbi_symbols.tab -s hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
 
 ## Mining gene symbols with SPARQL
 
+With a non-HUGO geneid information can be fetched with
+
+```sparql
+SELECT ?type1, ?label1, count(*)
+WHERE {
+?s1 ?p1 ?o1 .
+?o1 bif:contains "HK1" .
+?s1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type1 .
+?s1 <http://www.w3.org/2000/01/rdf-schema#label> ?label1 .
+}
+ORDER BY DESC (count(*))
+```
+
+will render a list of gene id's. Follow up with, for example,
+http://bio2rdf.org/geneid:100036759
 
 ## Project home page
 
