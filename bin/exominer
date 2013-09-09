@@ -38,11 +38,23 @@ opts = OptionParser.new do |o|
   o.on("--rdf", "Generate RDF") do |b|
     options[:rdf] = true
   end
+  o.on("--name name", 'Set name of result set') do |name|
+    options[:name] = name
+  end
   o.on("-s","--symbols fn", 'Symbol file fn') do |fn|
     options[:symbols] += [fn]
   end
   o.on("-i","--ignore fn", 'Ignore symbols in fn') do |fn|
     options[:ignore] = fn
+  end
+  o.on("--tag string", 'Tag string') do |tag|
+    tags = {}
+    ts = tag.split(/\s?;\s?/)
+    ts.each do |field|
+      key,value = field.split(/\s?=\s?/)
+      tags[key] = value
+    end
+    options[:tags] = tags
   end
   
   # Uncomment the following when using the bio-logger 
@@ -88,6 +100,11 @@ begin
   end
 
   $stderr.print options
+
+  # Create unique name for the resultset
+  name = options[:name]
+  name = options[:doi] if not name
+  name = 'anon' if not name
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
@@ -135,6 +152,9 @@ begin
 @prefix : <http://biobeat.org/rdf/exominer/ns#>  .
 
 HEADER
+    symbol_matches.each do | symbol, freq |
+      print ":#{symbol} :freq #{freq} .\n"
+    end
   else
     print "\nMatching symbol aliases:\n"
     alias_matches.sort_by{|k,v| v}.each do | k,v |

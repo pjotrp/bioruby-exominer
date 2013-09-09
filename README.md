@@ -203,7 +203,7 @@ want to add a design (old or new) simply use something like
 
   exominer --rdf -s ncbi_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
 
-These commands create turtle RDF with the --rdf switch. Simple pipe
+These commands create turtle RDF with the --rdf switch. Simply pipe
 the output into the triple-store with
 
   curl -T file.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/exominer.rdf
@@ -211,6 +211,12 @@ the output into the triple-store with
 The URI can be a little more descriptive, e.g.:
 
   curl -T design2012.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/design2012.rdf
+
+Finally, to support multiple searches and make it easier to
+dereference sources you can supply a unique name to each result set
+with the --name switch. E.g.
+
+  exominer --rdf --name tcga_bc -s ncbi_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
 
 ## Mining gene symbols with SPARQL
 
