@@ -52,7 +52,7 @@ opts = OptionParser.new do |o|
     ts = tag.split(/\s?;\s?/)
     ts.each do |field|
       key,value = field.split(/\s?=\s?/)
-      tags[key] = value
+      tags[key.to_sym] = value
     end
     options[:tags] = tags
   end
@@ -103,9 +103,9 @@ begin
 
   # Create unique name for the resultset
   name = options[:name]
-  name = options[:tags[:name]] if not name and options[:tags[:name]]
+  name = options[:tags][:name] if not name and options[:tags][:name]
   name = options[:doi] if not name
-  name = 'anon' if not name
+  name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
