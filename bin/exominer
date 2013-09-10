@@ -44,8 +44,12 @@ opts = OptionParser.new do |o|
   o.on("-s","--symbols fn", 'Symbol file') do |fn|
     options[:symbols] += [fn]
   end
-  o.on("--hugo  fn", 'Hugo symbol file') do |fn|
-    options[:hugo] = fn
+  o.on("--hugo [fn]", 'Hugo symbol file') do |fn|
+    if fn
+      options[:hugo] = fn
+    else
+      options[:hugo] = gempath + '/test/data/input/hugo_symbols'
+    end
   end
   o.on("-i","--ignore fn", 'Ignore symbols in fn (NYI)') do |fn|
     options[:ignore] = fn

@@ -37,6 +37,11 @@ Note: this software is under active development!
 gem install bio-exominer
 ```
 
+## Quick start
+
+List all genes in a paper. Visit the paper with your browser and save
+it as HTML or text to 'paper.txt'
+
 ### Using exominer with a triple-store
 
 If you intend to use exominer with a triple-store you need to install
@@ -105,6 +110,9 @@ and parse through
   gzip -d reference_genome_set.txt.gz
   hugo_exominer_symbols reference_genome_set.txt > hugo_symbols.tab
 ```
+
+A HUGO file is included with the gem (in test/data/input) and will be
+loaded if you use the --hugo switch without specifying a symbol file. 
 
 ### Making a text file of your document
 
