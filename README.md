@@ -33,6 +33,7 @@ Questions to ask from the RDF
 
 * What genes are mentioned in a paper?
 * What papers refer to certain genes?
+* What genes are mentioned most in papers?
 * What genes are mentioned since 2011?
 * What genes are linked to a certain disease subtype?
 * What genes are linked to some author or lab?
@@ -165,6 +166,19 @@ where list.tab contains a list of symbols to ignore. These symbols
 This can be useful when mining a paper at a time. The better route,
 however, is by adding the exome list and accompanying design to a
 triple store for further exploration.
+
+## Speeding up text search
+
+To speed things up you can create a binary version of the symbols
+table with
+
+  pack_exominer_symbols ncbi_symbols.tab
+
+and rename that file to
+
+  mv symbols.bin ncbi_symbols.bin
+
+Now use the bin version with exominer's -s switch.
 
 ## Using exominer with a triple-store
 

@@ -169,6 +169,7 @@ begin
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix hgnc: <http://identifiers.org/hgnc.symbol/> .
+@prefix ncbigene: <https://www.google.nl/search?q=ncbi+gene+alias+> .
 @prefix : <http://biobeat.org/rdf/exominer/ns#>  .
 
 HEADER
@@ -180,22 +181,24 @@ HEADER
       print ":#{name} :#{k.to_sym} \"#{v}\" .\n"
     end
     print "\n"
-
-    symbol_matches.each do | symbol, freq |
+  
+    write_symbol_rdf = lambda { |symbol,freq,is_alias=false| 
       match_info = info[symbol]
       symbolref = symbol + '_' + name
-      symboluri =
-        if hugo[symbol]
-          # http://bio2rdf.org/hugo:RAD51C
-          "hgnc:"+symbol
-        else
-          "http://bio2rdf.org/homologene:"+symbol
-        end
-      print ":#{symbolref} a #{symboluri} .\n"
+      print ":#{symbolref} a #{Symbols::uri(symbol,hugo)} .\n"
+      sym2 = info[symbol][:symbol]
+      print ":#{symbolref} a #{Symbols::uri(sym2,hugo)} .\n" if sym2 and sym2 != symbol
       print ":#{symbolref} dc:partOf :#{name} .\n"
       print ":#{symbolref} :frequency #{freq} .\n"
       print ":#{symbol} rdf:comment \"#{info[symbol][:descr]}\" .\n"
       print "\n"
+    }
+
+    alias_matches.each do | symbol, freq |
+      write_symbol_rdf.call(symbol,freq,is_alias=true)
+    end
+    symbol_matches.each do | symbol, freq |
+      write_symbol_rdf.call(symbol,freq,is_alias=false)
     end
   else
     print "\nMatching symbol aliases:\n"
