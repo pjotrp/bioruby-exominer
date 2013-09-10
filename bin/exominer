@@ -173,11 +173,14 @@ begin
 
 HEADER
     print ":#{name} :doi \"#{doi}\" . \n" if doi
+    print ":#{name} rdf:label \"#{name}\" . \n" 
     print ":#{name} a \"text resource\" . \n" 
     print ":#{name} dc:type \"#{options[:type]}\" . \n" if options[:type]
     options[:tags].each do | k,v |
       print ":#{name} :#{k.to_sym} \"#{v}\" .\n"
     end
+    print "\n"
+
     symbol_matches.each do | symbol, freq |
       match_info = info[symbol]
       symbolref = symbol + '_' + name
