@@ -42,24 +42,6 @@ gem install bio-exominer
 List all genes in a paper. Visit the paper with your browser and save
 it as HTML or text to 'paper.txt'
 
-### Using exominer with a triple-store
-
-If you intend to use exominer with a triple-store you need to install
-one. In principle you can use bio-rdf with any RDF triple store.
-Instructions for installing [4store](http://4store.org/) can be found on
-[bioruby-rdf](https://github.com/pjotrp/bioruby-rdf). You can add
-a new triple-store with
-
-```sh
-4s-backend-setup design
-4s-backend design
-4s-httpd -p 8081 design
-```
-
-and check the webserver is running on http://localhost:8081/status/.
-Again, check bioruby-rdf for instructions on installing 4store and
-sparql-query and examples.
-
 ## Command line interface (CLI)
 
 ### Adding NCBI symbols and aliases
@@ -228,6 +210,24 @@ dereference sources you can supply a unique name to each result set
 with the --name switch. E.g.
 
   exominer --rdf --name tcga_bc -s ncbi_symbols.tab --hugo hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+
+## Using exominer with a triple-store
+
+If you intend to use exominer with a triple-store you need to install
+one. In principle you can use bio-rdf with any RDF triple store.
+Instructions for installing [4store](http://4store.org/) can be found on
+[bioruby-rdf](https://github.com/pjotrp/bioruby-rdf). You can add
+a new triple-store with
+
+```sh
+4s-backend-setup design
+4s-backend design
+4s-httpd -p 8081 design
+```
+
+and check the webserver is running on http://localhost:8081/status/.
+Again, check bioruby-rdf for instructions on installing 4store and
+sparql-query and examples.
 
 ## Mining gene symbols with SPARQL
 
