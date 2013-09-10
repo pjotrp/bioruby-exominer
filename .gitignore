@@ -59,3 +59,4 @@ tcga_bc.txt
 *.freq
 reference_genome_set.txt
 *.rdf
+symbols.bin

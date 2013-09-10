@@ -1,0 +1,38 @@
+#! /usr/bin/env ruby
+#
+# Pack symbol file
+#
+# Copyright (C) 2013 Pjotr Prins <pjotr.prins@thebird.nl> 
+#
+
+gempath = File.dirname(File.dirname(__FILE__))
+$: << File.join(gempath,'lib')
+
+require 'msgpack'
+require 'bio-exominer/symbols'
+
+include BioExominer
+
+if ARGV[0] == '-d'
+  ARGV.shift
+
+  print "Unpacking symbols.bin..."
+  u = MessagePack::Unpacker.new(File.new('symbols.bin','rb'))
+  begin
+    u.each do |obj|
+      print obj[0],"\t",(obj[1] ? obj[1].join('|') : "NA"),"\t",obj[2],"\n"
+    end
+  rescue EOFError
+  end
+else
+
+  print "Writing symbols.bin..."
+  bin = MessagePack::Packer.new(File.new('symbols.bin','wb'))
+
+  ARGF.each_line do | line |
+    symbol,aliases,descr = Symbols::parse_line(line)
+    bin.write([symbol,aliases,descr])
+  end
+  bin.flush
+
+end
