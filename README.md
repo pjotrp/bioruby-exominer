@@ -29,6 +29,22 @@ sources, such as NCBI, Biomart and/or Bio2rdf. Some example scripts
 are in ./scripts. For a more specific treatment of design and
 input/output of exominer, see ./doc/design.md.
 
+Questions to ask from the RDF 
+
+* What genes are mentioned in a paper?
+* What papers refer to certain genes?
+* What genes are mentioned since 2011?
+* What genes are linked to a certain disease subtype?
+* What genes are linked to some author or lab?
+* What genes exist in a design?
+* How do designs differ?
+* What genes are not in a design mentioned since 2010?
+
+When linking out to TCGA and bio2rdf we can get mutation information and gene sizes
+
+* Give mutations of genes and their sizes of those listed in a paper 
+* Give mutations of genes and their sizes of those listed in a design
+
 Note: this software is under active development!
 
 ## Installation
