@@ -110,7 +110,7 @@ and parse through
 
 Save HTML/Word/Excel/PDF files in a textual format. Command line
 tools, such as lynx, antiword and pdftotext exist for this purpose. An
-example of a textual version of a Nature paper can be made with
+example of a textual version of an online Nature paper can be made with
 
   lynx --dump http://www.nature.com/nature/journal/v490/n7418/full/nature11412.html >> tcga_bc.txt
 
@@ -121,7 +121,7 @@ group will not be amused.
 
 Pass the symbol file on the command line and pipe in the textual file, e.g.
 
-  exominer -s ncbi_symbols.tab -s hugo_symbols.tab < tcga_bc.txt 
+  exominer -s ncbi_symbols.tab --hugo hugo_symbols.tab < tcga_bc.txt 
 
 This results in a list of symbols and aliases found in the paper, with
 their tally. For example
@@ -183,14 +183,14 @@ the target of the publication, such as species or disease type.
 
 The DOI describing the file:
 
-  exominer --rdf -s ncbi_symbols.tab -s hugo_symbols.tab \
+  exominer --rdf -s ncbi_symbols.tab --hugo hugo_symbols.tab \
     --doi doi:10.1038/nature11412 < tcga_bc.txt 
 
 allows for mining title and publication date for every
 symbol found. To add some meta information you could add semi-colon
 separated tags
 
-  exominer --rdf -s ncbi_symbols.tab -s hugo_symbols.tab \
+  exominer --rdf -s ncbi_symbols.tab --hugo hugo_symbols.tab \
     --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
 
 which helps mining data later on. If no doi exists, you may just add
@@ -204,7 +204,7 @@ multiple tags are also allowed.
 exominer generates RDF which can be added to a triple-store. If you
 want to add a design (old or new) simply use something like
 
-  exominer --rdf -s hugo_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
+  exominer --rdf --hugo hugo_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
 
 These commands create turtle RDF with the --rdf switch. Simply pipe
 the output into the triple-store with
@@ -219,7 +219,7 @@ Finally, to support multiple searches and make it easier to
 dereference sources you can supply a unique name to each result set
 with the --name switch. E.g.
 
-  exominer --rdf --name tcga_bc -s ncbi_symbols.tab -s hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+  exominer --rdf --name tcga_bc -s ncbi_symbols.tab --hugo hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
 
 ## Mining gene symbols with SPARQL
 

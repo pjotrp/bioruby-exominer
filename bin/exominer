@@ -41,10 +41,13 @@ opts = OptionParser.new do |o|
   o.on("--name name", 'Set name of result set') do |name|
     options[:name] = name
   end
-  o.on("-s","--symbols fn", 'Symbol file fn') do |fn|
+  o.on("-s","--symbols fn", 'Symbol file') do |fn|
     options[:symbols] += [fn]
   end
-  o.on("-i","--ignore fn", 'Ignore symbols in fn') do |fn|
+  o.on("--hugo  fn", 'Hugo symbol file') do |fn|
+    options[:hugo] = fn
+  end
+  o.on("-i","--ignore fn", 'Ignore symbols in fn (NYI)') do |fn|
     options[:ignore] = fn
   end
   o.on("--doi doi", 'DOI') do |doi|
@@ -127,8 +130,8 @@ begin
   alias_matches = {}
   info = {}
   hugo = {}
-  options[:symbols].each do |symbolfn|
-    is_hugo = symbolfn =~ /hugo/i
+  
+  parse_symbols = lambda { |symbolfn,is_hugo=false|  
     Symbols::each(symbolfn) do | symbol,aliases,descr |
       hugo[symbol] = true
       # p [symbol,aliases,descr]
@@ -150,7 +153,11 @@ begin
         end
       end
     end
-  end
+  }
+
+  parse_symbols.call(options[:hugo],is_hugo = true) if options[:hugo]
+  options[:symbols].each { |fn| parse_symbols.call(fn) }
+
   if options[:rdf]
     # Write RDF!
     print <<HEADER
