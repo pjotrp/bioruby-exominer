@@ -84,8 +84,8 @@ documents.
 
 ### Adding HUGO symbols and aliases
 
-To make sure all HUGO symbols are added, download the all symbols file
-and parse through 
+To make sure all recent HUGO symbols are added, download the all symbols file
+and parse it through 
 
 ```sh
   wget ftp://ftp.ebi.ac.uk/pub/databases/genenames/reference_genome_set.txt.gz
@@ -93,7 +93,7 @@ and parse through
   hugo_exominer_symbols reference_genome_set.txt > hugo_symbols.tab
 ```
 
-A HUGO file is included with the gem (in test/data/input) and will be
+A HUGO file is included with the gem (in test/data/input/hugo_symbols) and will be
 loaded if you use the --hugo switch without specifying a symbol file. 
 
 ### Making a text file of your document
@@ -210,6 +210,15 @@ dereference sources you can supply a unique name to each result set
 with the --name switch. E.g.
 
   exominer --rdf --name tcga_bc -s ncbi_symbols.tab --hugo hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+
+## Vocabularies
+
+In addition to the standard W3C vocabularies, exominer uses the
+[journal archiving and interchange tag set
+(JAT)](http://jats.nlm.nih.gov/archiving/) for describing
+publications. Another is [Bibliontology](http://bibliontology.com/).
+The British Library vocabulary may be
+[useful](http://www.bl.uk/bibliographic/datasamples.html) too.
 
 ## Using exominer with a triple-store
 

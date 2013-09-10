@@ -167,22 +167,24 @@ begin
 
 # RDF output by bio-exominer https://github.com/pjotrp/bioruby-exominer
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix hgnc: <http://identifiers.org/hgnc.symbol/> .
 @prefix : <http://biobeat.org/rdf/exominer/ns#>  .
 
 HEADER
-    print ":#{name} :doi #{doi} . \n" if doi
+    print ":#{name} :doi \"#{doi}\" . \n" if doi
     symbol_matches.each do | symbol, freq |
       match_info = info[symbol]
       symbolref = symbol + '_' + name
       symboluri =
         if hugo[symbol]
           # http://bio2rdf.org/hugo:RAD51C
-          "http://identifiers.org/hgnc.symbol/"+symbol
+          "hgnc:"+symbol
         else
           "http://bio2rdf.org/homologene:"+symbol
         end
       print ":#{symbolref} a #{symboluri} .\n"
-      print ":#{symbolref} :appears_in :#{name} .\n"
+      print ":#{symbolref} dc:partOf :#{name} .\n"
       print ":#{symbolref} :frequency #{freq} .\n"
       print ":#{symbol} rdf:comment \"#{info[symbol][:descr]}\" .\n"
       print "\n"
