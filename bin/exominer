@@ -134,7 +134,6 @@ begin
   parse_symbols = lambda { |symbolfn,is_hugo=false|  
     Symbols::each(symbolfn) do | symbol,aliases,descr |
       hugo[symbol] = true
-      # p [symbol,aliases,descr]
       symbol_count += 1
       alias_count += aliases.size if aliases
       if tokens[symbol]
