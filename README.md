@@ -41,7 +41,6 @@ Questions to ask from the RDF
 * How do designs differ?
 * What genes are not in a design mentioned since 2010?
 
-
 When linking out to TCGA and bio2rdf we can get mutation information and gene sizes
 
 * Give mutations of genes and their sizes of those listed in a paper 
@@ -62,6 +61,8 @@ And mutation related questions
 * List mutated genes per patient
 * List patient per mutated gene
 * List all mutations that have exactly the same start position and matching variant type (SNP, INS, DEL)
+
+These questions are answered through SPARQL queries below.
 
 Note: this software is under active development!
 
