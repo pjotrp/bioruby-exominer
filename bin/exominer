@@ -124,8 +124,9 @@ begin
   # Log parsed options and remaining arguments in ARGV
   # logger.info [options, ARGV]
 
-  $stderr.print "\nLoading text and tokenizing..."
+  $stderr.print "\nLoading text..."
   buf = ARGF.read
+  $stderr.print "\nTokenizing..."
   tokens = TextParser::tokenize(buf)
 
   symbol_count = 0
@@ -135,6 +136,7 @@ begin
   info = {}
   hugo = {}
   
+  $stderr.print "\nParse symbol files..."
   parse_symbols = lambda { |symbolfn,is_hugo=false|  
     Symbols::each(symbolfn) do | symbol,aliases,descr |
       hugo[symbol] = true

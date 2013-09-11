@@ -4,7 +4,10 @@ module BioExominer
 
   module TextParser 
 
-    SKIP_TOKENS = %w{ can has Ma van large was polymerase had far a impact was }
+    SKIP_TOKENS = %w{ can has Ma van large was polymerase had far a impact was East early 
+      face Park ali and team tag ras ac tail at al age ac TA tag
+    }
+
     def TextParser::valid_token? token
       return false if token == ""
       return false if token =~ /^[\d,.]+$/
