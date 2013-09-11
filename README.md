@@ -41,10 +41,27 @@ Questions to ask from the RDF
 * How do designs differ?
 * What genes are not in a design mentioned since 2010?
 
+
 When linking out to TCGA and bio2rdf we can get mutation information and gene sizes
 
 * Give mutations of genes and their sizes of those listed in a paper 
 * Give mutations of genes and their sizes of those listed in a design
+
+The TCGA (maf) data is provided by Will's publisci RDF. We can ask
+patient related questions
+
+* How many patients are in the database?
+* How many patients per tumor type?
+
+And mutation related questions
+
+* Rank patients on number of mutations
+* How many genes show at least one mutation per patient
+* What genes in what patients show more than X mutations (normalized for gene length)
+* Rank genes on number of mutations (normalized for gene length)
+* List mutated genes per patient
+* List patient per mutated gene
+* List all mutations that have exactly the same start position and matching variant type (SNP, INS, DEL)
 
 Note: this software is under active development!
 
