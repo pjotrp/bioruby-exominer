@@ -4,13 +4,17 @@ module BioExominer
 
   module TextParser 
 
+    SKIP_TOKENS = %w{ can has Ma van large was polymerase had far a impact was }
     def TextParser::valid_token? token
       return false if token == ""
       return false if token =~ /^[\d,.]+$/
       return false if token !~ /[a..zA..Z]+/
       true
     end
+
     def TextParser::add tokens, word
+      return if SKIP_TOKENS.include?(word)
+      return if word.size < 2
       tokens[word] = 0 if not tokens[word]
       tokens[word] += 1
     end
@@ -18,7 +22,7 @@ module BioExominer
     def TextParser::tokenize buf
       tokens = {}
       buf.split(/[\s\/.,:]+/).each do | word |
-        # Remove brackets and braces in first and last postions
+        # Remove brackets and braces in first and last positions
         if word =~ /^\[\d+\]/
           word = word.sub(/^\[\d+\]/,'')
         end

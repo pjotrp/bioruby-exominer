@@ -114,7 +114,7 @@ begin
   # Create unique name for the resultset
   doi  = options[:doi]
   name = options[:name]
-  name = options[:tags][:name] if not name and options[:tags][:name]
+  name = options[:tags][:name] if not name and options[:tags] and options[:tags][:name]
   name = doi if not name and doi
   name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
 
@@ -169,16 +169,20 @@ begin
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix hgnc: <http://identifiers.org/hgnc.symbol/> .
+@prefix doi: <http://dx.doi.org/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix ncbigene: <https://www.google.nl/search?q=ncbi+gene+alias+> .
 @prefix : <http://biobeat.org/rdf/exominer/ns#>  .
 
 HEADER
-    print ":#{name} :doi \"#{doi}\" . \n" if doi
+    print ":#{name} doi:doi \"#{doi}\" . \n" if doi
     print ":#{name} rdf:label \"#{name}\" . \n" 
     print ":#{name} a \"text resource\" . \n" 
     print ":#{name} dc:type \"#{options[:type]}\" . \n" if options[:type]
-    options[:tags].each do | k,v |
-      print ":#{name} :#{k.to_sym} \"#{v}\" .\n"
+    if options[:tags]
+      options[:tags].each do | k,v |
+        print ":#{name} :#{k.to_sym} \"#{v}\" .\n"
+      end
     end
     print "\n"
   
