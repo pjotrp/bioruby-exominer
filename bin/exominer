@@ -217,11 +217,11 @@ HEADER
   else
     print "\nMatching symbol aliases:\n"
     alias_matches.sort_by{|k,v| v}.each do | k,v |
-      print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n" if not symbol_matches[k]
+      print v,(hugo[info[k][:symbol]]?" HUGO":""),"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n" if not symbol_matches[k]
     end
     print "\nMatching symbols:\n"
     symbol_matches.sort_by{|k,v| v}.each do | k,v |
-      print v,"\t",k,"\t",info[k][:descr],"\n"
+      print v,(hugo[k]?" HUGO":""),"\t",k,"\t",info[k][:descr],"\n"
     end
   end
   # $stderr.print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."

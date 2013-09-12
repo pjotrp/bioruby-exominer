@@ -39,6 +39,8 @@ Questions to ask from the RDF
 * What genes are linked to a certain disease subtype?
 * What genes are linked to some author or lab?
 * What genes exist in a design?
+* What are the genes in a design that are non-HUGO named
+* What are the genes in a paper that are non-HUGO named
 * How do designs differ?
 * What genes are not in a design mentioned since 2010?
 
