@@ -1,19 +1,20 @@
 module BioExominer
 
   require 'msgpack'
+  require 'bio-exominer/rdf'
 
   module Symbols
     def Symbols::uri(symbol,hugo)
       if hugo[symbol]
         # http://bio2rdf.org/hugo:RAD51C
-        "hgnc:"+symbol
+        "hgnc:"+RDF::make_identifier(symbol)
       else
-        "ncbigene:"+symbol
+        "ncbigene:"+RDF::make_identifier(symbol).gsub(/\W|\|/,'')  # remove all non-printable
       end
     end
 
     def Symbols::parse_line(line)
-      symbol,aliases,descr = line.split(/\t/)
+      symbol,aliases,descr = line.strip.split(/\t/)
       aliases = 
         if aliases == 'NA'
           nil

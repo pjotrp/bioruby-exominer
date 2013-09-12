@@ -5,7 +5,10 @@ module BioExominer
   module TextParser 
 
     SKIP_TOKENS = %w{ can has Ma van large was polymerase had far a impact was East early 
-      face Park ali and team tag ras ac tail at al age ac TA tag small
+      face Park ali and team tag ras ac tail at al age ac TA tag small this pure such
+      type gene pmc but is ten org we an term not as by lost et out how up per for
+      end beta der The Ten Out At No How pdf Ding Jan To cell gov even Jun
+      Sun DNA Nat in hit doc bin with set Nov unknown key link to cgi
     }
 
     # L3MBTL
