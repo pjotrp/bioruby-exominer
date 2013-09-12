@@ -150,7 +150,7 @@ begin
       if tokens[symbol] and not info[symbol]
         symbol_matches[symbol] = tokens[symbol]
         hugo_matches[symbol] ||= true if is_hugo
-        info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
+        info[symbol] = { :symbol => symbol, :is_hugo=>is_hugo, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
       end  
       # ---- If an alias has a match and is not in the list, add it
       if aliases
@@ -161,7 +161,7 @@ begin
             # $stderr.print "\n=="+word+':'+symbol if word == "L3MBTL"
             hugo_matches[word] ||= true if hugo[word]
             alias_matches[word] = tokens[word]
-            info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
+            info[word] = { :symbol => symbol, :is_hugo=>hugo[word], :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
           end
         end
       end
@@ -202,6 +202,7 @@ HEADER
       print ":#{symbolref} a #{Symbols::uri(symbol,hugo)} .\n"
       sym2 = info[symbol][:symbol]
       print ":#{symbolref} a #{Symbols::uri(sym2,hugo)} .\n" if sym2 and sym2 != symbol
+      # print ":#{symbolref} dc:partOf :HUGO .\n" if match_info[:is_hugo]
       print ":#{symbolref} dc:partOf :#{name} .\n"
       print ":#{symbolref} :frequency #{freq} .\n"
       print ":#{symbol} rdf:comment \"#{info[symbol][:descr]}\" .\n"
