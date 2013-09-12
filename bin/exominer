@@ -131,28 +131,34 @@ begin
 
   symbol_count = 0
   alias_count = 0
-  symbol_matches = {}
-  alias_matches = {}
-  info = {}
-  hugo = {}
+  hugo_count = 0
+  hugo_matches = {}
+  symbol_matches = {}   # match symbols
+  alias_matches = {}    # match aliases
+  info = {}             # the main symbol match tracker
+  hugo = {}             # HUGO tracker
   
   $stderr.print "\nParse symbol files..."
   parse_symbols = lambda { |symbolfn,is_hugo=false|  
+    # ---- for every symbol file
     Symbols::each(symbolfn) do | symbol,aliases,descr |
-      hugo[symbol] = true
-      symbol_count += 1
-      alias_count += aliases.size if aliases
-      if tokens[symbol]
-        symbol_matches[symbol] ||= 0
-        symbol_matches[symbol] += 1
+      # ---- for every symbol and aliases
+      hugo[symbol] = true if is_hugo
+      # symbol_count += 1
+      # alias_count += aliases.size if aliases
+      # ---- If the symbol has a match, and it is not in the list, add it
+      if tokens[symbol] and not info[symbol]
+        symbol_matches[symbol] = tokens[symbol]
+        # hugo_count += 1 if is_hugo
+        hugo_matches[symbol] ||= true
         info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
       end  
+      # ---- If an alias has a match and is not in the list, add it
       if aliases
         aliases.each do | word |
-          full = word + ' (' + symbol + ')'
-          if tokens[word]
-            alias_matches[word] ||= 0
-            alias_matches[word] += 1
+          # full = word + ' (' + symbol + ')'
+          if tokens[word] and not info[word]
+            alias_matches[word] = tokens[word]
             info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
           end
         end
@@ -201,7 +207,7 @@ HEADER
     }
 
     alias_matches.each do | symbol, freq |
-      write_symbol_rdf.call(symbol,freq,is_alias=true)
+      write_symbol_rdf.call(symbol,freq,is_alias=true) if not symbol_matches[symbol]
     end
     symbol_matches.each do | symbol, freq |
       write_symbol_rdf.call(symbol,freq,is_alias=false)
@@ -209,14 +215,15 @@ HEADER
   else
     print "\nMatching symbol aliases:\n"
     alias_matches.sort_by{|k,v| v}.each do | k,v |
-      print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n"
+      print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n" if not symbol_matches[k]
     end
     print "\nMatching symbols:\n"
     symbol_matches.sort_by{|k,v| v}.each do | k,v |
       print v,"\t",k,"\t",info[k][:descr],"\n"
     end
   end
-  $stderr.print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
+  # $stderr.print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
+  $stderr.print "\nThere were #{hugo_matches.size} HUGO matches out of #{hugo.size} symbols."
   $stderr.print "\nDone!\n"
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message

@@ -34,6 +34,7 @@ Questions to ask from the RDF
 * What genes are mentioned in a paper?
 * What papers refer to certain genes?
 * What genes are mentioned most in papers?
+* What genes are mentioned only in one paper?
 * What genes are mentioned since 2011?
 * What genes are linked to a certain disease subtype?
 * What genes are linked to some author or lab?

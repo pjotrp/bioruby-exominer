@@ -5,7 +5,7 @@ module BioExominer
   module TextParser 
 
     SKIP_TOKENS = %w{ can has Ma van large was polymerase had far a impact was East early 
-      face Park ali and team tag ras ac tail at al age ac TA tag
+      face Park ali and team tag ras ac tail at al age ac TA tag small
     }
 
     def TextParser::valid_token? token
@@ -18,7 +18,7 @@ module BioExominer
     def TextParser::add tokens, word
       return if SKIP_TOKENS.include?(word)
       return if word.size < 2
-      tokens[word] = 0 if not tokens[word]
+      tokens[word] ||= 0 
       tokens[word] += 1
     end
 
