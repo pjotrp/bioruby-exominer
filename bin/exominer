@@ -137,27 +137,29 @@ begin
   alias_matches = {}    # match aliases
   info = {}             # the main symbol match tracker
   hugo = {}             # HUGO tracker
-  
+
   $stderr.print "\nParse symbol files..."
   parse_symbols = lambda { |symbolfn,is_hugo=false|  
     # ---- for every symbol file
     Symbols::each(symbolfn) do | symbol,aliases,descr |
       # ---- for every symbol and aliases
+      # $stderr.print "\nHUGO-"+symbol if symbol =~ /L3MBTL/
       hugo[symbol] = true if is_hugo
-      # symbol_count += 1
       # alias_count += aliases.size if aliases
       # ---- If the symbol has a match, and it is not in the list, add it
       if tokens[symbol] and not info[symbol]
         symbol_matches[symbol] = tokens[symbol]
-        # hugo_count += 1 if is_hugo
-        hugo_matches[symbol] ||= true
+        hugo_matches[symbol] ||= true if is_hugo
         info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
       end  
       # ---- If an alias has a match and is not in the list, add it
       if aliases
         aliases.each do | word |
+          # $stderr.print "\n!!"+word+':'+symbol if word == "L3MBTL"
           # full = word + ' (' + symbol + ')'
           if tokens[word] and not info[word]
+            # $stderr.print "\n=="+word+':'+symbol if word == "L3MBTL"
+            hugo_matches[word] ||= true if hugo[word]
             alias_matches[word] = tokens[word]
             info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
           end

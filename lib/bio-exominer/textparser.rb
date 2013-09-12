@@ -8,10 +8,12 @@ module BioExominer
       face Park ali and team tag ras ac tail at al age ac TA tag small
     }
 
+    # L3MBTL
+
     def TextParser::valid_token? token
-      return false if token == ""
-      return false if token =~ /^[\d,.]+$/
-      return false if token !~ /[a..zA..Z]+/
+      return false if token.strip == "" 
+      return false if token =~ /^(\d|[,.])+$/
+      return false if token =~ /\W/  # at least one word char
       true
     end
 
@@ -24,8 +26,10 @@ module BioExominer
 
     def TextParser::tokenize buf
       tokens = {}
-      buf.split(/[\s\/.,:]+/).each do | word |
+      buf.split(/[\r\s\/.,:]+/).each do | word |
+        w1 = word
         # Remove brackets and braces in first and last positions
+        add(tokens,w1) if TextParser.valid_token?(word)
         if word =~ /^\[\d+\]/
           word = word.sub(/^\[\d+\]/,'')
         end
@@ -34,10 +38,10 @@ module BioExominer
         word = word.sub(/[.,:;]$/,'') # remove punctuation
         word = word.sub(/^[`"']/,'')  # remove starting quotes
         word = word.sub(/[`"']$/,'')  # remove ending quotes
-        add(tokens,word) if TextParser.valid_token?(word)
-        # split on dash
-        if word =~ /-/
-          word.split(/-/).each do |w|
+        add(tokens,word) if TextParser.valid_token?(word) and word != w1
+        # split on dash or underscore
+        if word =~ /-|_/
+          word.split(/-|_/).each do |w|
             add(tokens,w) if TextParser.valid_token?(w)
           end
         end
