@@ -5,7 +5,7 @@ require 'uri'
   module RDF
 
     def RDF::valid_uri? uri
-      uri =~ /^([!#$&-;=?\[\]_a-z~]|%[0-9a-f]{2})+$/i
+      uri =~ /^([!#$&-;=?_a-z~]|%[0-9a-f]{2})+$/i
     end
 
     # An identifier is used for the subject and predicate in RDF. This is a case-sensitive
@@ -16,7 +16,7 @@ require 'uri'
       id = s.strip.gsub(/[^[:print:]]/, '').gsub(/[#)(,]/,"").gsub(/[%]/,"perc").gsub(/(\s|\.|\$|\/|\\)+/,"_")
       # id = URI::escape(id)
       id = id.gsub(/\|/,'_')
-      id = id.gsub(/\-/,'_')
+      id = id.gsub(/\-|:/,'_')
       if id != s 
         # logger = Bio::Log::LoggerPlus['bio-table']
         $stderr.print "\nWARNING: Changed identifier <#{s}> to <#{id}>"
