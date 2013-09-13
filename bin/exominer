@@ -185,7 +185,7 @@ begin
 @prefix : <http://biobeat.org/rdf/exominer/ns#>  .
 
 HEADER
-    print ":#{name} doi:doi \"#{doi}\" . \n" if doi
+    print ":#{name} :doi doi:#{doi} . \n" if doi
     print ":#{name} rdf:label \"#{name}\" . \n" 
     print ":#{name} a \"text resource\" . \n" 
     print ":#{name} dc:type \"#{options[:type]}\" . \n" if options[:type]
@@ -207,7 +207,7 @@ HEADER
       print ":#{symbolref} a #{Symbols::uri(symbol,hugo)} .\n" if symbol1 != symbol
       print ":#{symbolref} dc:partOf :#{name} .\n"
       print ":#{symbolref} :frequency #{freq} .\n"
-      # print "#{symboluri} rdf:label \"#{info[symbol][:symbol]}\" .\n"
+      print "#{symboluri} rdf:label \"#{symboluri}\" .\n"
       print "#{symboluri} rdf:comment \"#{info[symbol][:descr]}\" .\n"
       print "\n"
     }

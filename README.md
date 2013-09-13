@@ -291,6 +291,20 @@ sparql-query and examples.
 
 ## Mining gene symbols with SPARQL
 
+### Looking for all database information in the triple-store
+
+```sparql
+SELECT * WHERE { ?s ?p ?o } 
+```
+
+This can be run with the sparql-query tool
+
+```
+sparql-query http://localhost:8081/sparql/ 'SELECT * WHERE { ?s ?p ?o } LIMIT 10'
+```
+
+
+
 With a non-HUGO geneid information can be fetched with
 
 ```sparql
