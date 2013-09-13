@@ -1,3 +1,8 @@
-require 'minitest'
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-p "HELP"
+describe RDF, "RDF syntax" do 
+
+  describe "When converting URIs/identifiers" do
+    
+  end
+end

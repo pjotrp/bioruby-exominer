@@ -4,12 +4,14 @@ module BioExominer
   require 'bio-exominer/rdf'
 
   module Symbols
+
+    # Make a full URI out of a symbol
     def Symbols::uri(symbol,hugo)
       if hugo[symbol]
         # http://bio2rdf.org/hugo:RAD51C
         "hgnc:"+RDF::make_identifier(symbol)
       else
-        "ncbigene:"+RDF::make_identifier(symbol).gsub(/\W|\|/,'')  # remove all non-printable
+        "ncbigene:"+RDF::make_identifier(symbol)  # remove all non-printable
       end
     end
 

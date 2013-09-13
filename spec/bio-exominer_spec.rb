@@ -6,4 +6,3 @@
 #   end
 # end
 
-print "EEK"

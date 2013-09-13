@@ -39,7 +39,6 @@ Jeweler::RubygemsDotOrgTasks.new
 require 'rake/testtask'
 
 Rake::TestTask.new do |t|
-  p "HEHY"
   t.pattern = "spec/*_spec.rb"
 end
 
