@@ -199,8 +199,9 @@ HEADER
     write_symbol_rdf = lambda { |symbol,freq,is_alias=false| 
       match_info = info[symbol]
       symbol1 = match_info[:symbol] 
-      symboluri = Symbols::uri(symbol1,hugo) 
-      symbol1 = RDF::make_identifier(symbol1) if not hugo[symbol1]
+      symboluri = Symbols::uri(symbol1,hugo)
+      symbolidentifier = RDF::make_identifier(symbol1)
+      symbol1 = symbolidentifier if not hugo[symbol1]
       symbolref = name + '_' + symbol1
       print ":#{symbolref} a #{symboluri} .\n" 
       print ":#{symbolref} a #{Symbols::uri(symbol,hugo)} .\n" if symbol1 != symbol
