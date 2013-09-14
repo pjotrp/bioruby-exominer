@@ -16,6 +16,10 @@ class TestRDF < MiniTest::Unit::TestCase
   
   include BioExominer
 
+  def test_uri_escape
+    assert_equal !RDF::escape("")
+  end
+
   def test_uri_validator
     # invalid
     assert !RDF::valid_uri?("use`quote")
