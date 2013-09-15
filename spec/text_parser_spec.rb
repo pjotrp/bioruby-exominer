@@ -34,13 +34,15 @@ TEXT
   end
 
   BUF2 =<<TEXT2
-  valid token
+  valid token figure S11 table XX
   Invalid MD, and RD Jester, Wikkel W, Wokkel WOS 
 TEXT2
 
   def test_valid_tokens 
     match = TextParser::tokenize(BUF2)
     assert match['token']
+    assert !match['S11']
+    assert !match['XX']
     assert !match['Wokkel']
     assert match['WOS']
     assert !match['MD']

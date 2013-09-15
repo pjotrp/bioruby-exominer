@@ -49,10 +49,11 @@ module BioExominer
       list = buf.split(/[\r\n\s]+/)
       list.each_with_index do | word,idx |
         n1 = p1 = nil
+        p1 = rm_punctuation(list[idx-1]) if idx>0
         w1 = rm_punctuation(word)
         n1 = rm_punctuation(list[idx+1]) if idx<list.size
-        p1 = rm_punctuation(list[idx-1]) if idx>0
         next if w1.size < 2
+        next if p1 =~ /table|dataset|supplement|figure/i 
         # Filter out letters+name
         if w1 =~ /^[A-Z]/ and w1.capitalize == w1
           next if n1 and n1.size == 1
