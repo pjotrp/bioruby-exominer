@@ -33,4 +33,21 @@ TEXT
     assert_equal match['GEN2.X'], ['Fish the token out of a very long sentence Fish the token GEN2.X out of a very long sentence Fish the token out of a']
   end
 
+  BUF2 =<<TEXT2
+  valid token
+  Invalid MD, and RD Jester, Wikkel W, Wokkel WOS 
+TEXT2
+
+  def test_valid_tokens 
+    match = TextParser::tokenize(BUF2)
+    assert match['token']
+    assert !match['Wokkel']
+    assert match['WOS']
+    assert !match['MD']
+    assert !match['Invalid']
+    assert !match['RD']
+    assert !match['Jester']
+    assert !match['Wikkel']
+    assert !match['W']
+  end
 end

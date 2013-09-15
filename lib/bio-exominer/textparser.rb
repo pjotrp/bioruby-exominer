@@ -10,6 +10,7 @@ module BioExominer
       type gene pmc but is ten org we an term not as by lost et out how up per for
       end beta der The Ten Out At No How pdf Ding Jan To cell gov even Jun
       Sun DNA Nat in hit doc bin with set Nov unknown key link to cgi
+      and or
     }
 
     # L3MBTL
@@ -23,26 +24,50 @@ module BioExominer
 
     def TextParser::add tokens, word
       return if SKIP_TOKENS.include?(word)
-      return if word.size < 2
+      # return if word.size < 2
       tokens[word] ||= 0 
       tokens[word] += 1
+    end
+
+    def TextParser::rm_punctuation w
+      return nil if w == nil
+      word = w.dup
+      if word =~ /^\[\d+\]/
+        word = word.sub(/^\[\d+\]/,'')
+      end
+      word = word.sub(/^\(/,'')
+      word = word.sub(/\)$/,'')     
+      word = word.sub(/[,:;!]$/,'') # remove punctuation
+      word = word.sub(/^[`"']/,'')  # remove starting quotes
+      word = word.sub(/[`"']$/,'')  # remove ending quotes
+      word
     end
 
     # Return tokens with count
     def TextParser::tokenize buf
       tokens = {}
-      buf.split(/[\r\s\/!,:]+/).each do | word |
-        w1 = word
+      list = buf.split(/[\r\n\s]+/)
+      list.each_with_index do | word,idx |
+        n1 = p1 = nil
+        w1 = rm_punctuation(word)
+        n1 = rm_punctuation(list[idx+1]) if idx<list.size
+        p1 = rm_punctuation(list[idx-1]) if idx>0
+        next if w1.size < 2
+        # Filter out letters+name
+        if w1 =~ /^[A-Z]/ and w1.capitalize == w1
+          next if n1 and n1.size == 1
+          next if p1 and p1.size == 1
+          next if n1 and n1.size == 2 and n1 =~ /^[A-Z][A-Z]/
+          next if p1 and p1.size == 2 and p1 =~ /^[A-Z][A-Z]/
+        end
+        if w1.size == 2 and w1 =~ /^[A-Z][A-Z]/
+          next if p1 and p1 =~ /^[A-Z]/ and p1.capitalize == p1
+          next if n1 and n1 =~ /^[A-Z]/ and n1.capitalize == n1
+        end
+        # Filter out all lowercase small names
+        next if w1.size < 4 and w1 == w1.downcase
         # Remove brackets and braces in first and last positions
         add(tokens,w1) if TextParser.valid_token?(word)
-        if word =~ /^\[\d+\]/
-          word = word.sub(/^\[\d+\]/,'')
-        end
-        word = word.sub(/^\(/,'')
-        word = word.sub(/\)$/,'')     
-        word = word.sub(/[,:;]$/,'') # remove punctuation
-        word = word.sub(/^[`"']/,'')  # remove starting quotes
-        word = word.sub(/[`"']$/,'')  # remove ending quotes
         # p [word,w1,TextParser.valid_token?(word)]
         add(tokens,word) if TextParser.valid_token?(word) and word != w1
         # split on dash or underscore
@@ -52,6 +77,7 @@ module BioExominer
           end
         end
       end
+      p tokens
       tokens
     end
 
