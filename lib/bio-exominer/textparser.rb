@@ -4,6 +4,7 @@ module BioExominer
 
   module TextParser 
 
+    MAX_SIZE = 120
     SKIP_TOKENS = %w{ can has Ma van large was polymerase had far a impact was East early 
       face Park ali and team tag ras ac tail at al age ac TA tag small this pure such
       type gene pmc but is ten org we an term not as by lost et out how up per for
@@ -64,10 +65,22 @@ module BioExominer
         sentence = sentence1.strip.gsub(/(\r|\n)\s*/,' ') 
         tokens = tokenize(sentence)
         tokens.each { | token, count |
+          # shorten the sentence
+          sentence2 = 
+            if sentence.size > MAX_SIZE+2
+              half_size = MAX_SIZE/2
+              pos = sentence.index(token)
+              start = (pos-half_size<0 ? 0 : pos-half_size)
+              stop  = pos+half_size
+              s2 = sentence[start..stop]
+              s2.sub(/^\w+\s+/,'').sub(/\s+\w+$/,'')
+            else
+              sentence
+            end
           tokens_count[token] ||= 0
           tokens_count[token] += count
           tokens_context[token] ||= []
-          tokens_context[token] << sentence
+          tokens_context[token] << sentence2
         }
       end
       return tokens_count, tokens_context

@@ -7,6 +7,19 @@ class TestTextParser < MiniTest::Unit::TestCase
 
   Hello world. Test gene GEN1.X. This is with context! I don't believe this is true,
   and that you can do this. Love Ruby, love RDF. Love the combination.
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token GEN2.X out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
+  Fish the token out of a very long sentence
 TEXT
 
   def test_tokenize_with_context
@@ -17,6 +30,7 @@ TEXT
     assert_equal match['Love'], ['Love Ruby, love RDF', 'Love the combination']
     assert_equal match['context'], ['This is with context! I don\'t believe this is true, and that you can do this']
     assert_equal match['GEN1.X'], ['Test gene GEN1.X']
+    assert_equal match['GEN2.X'], ['Fish the token out of a very long sentence Fish the token GEN2.X out of a very long sentence Fish the token out of a']
   end
 
 end
