@@ -66,7 +66,7 @@ module BioExominer
           next if n1 and n1 =~ /^[A-Z]/ and n1.capitalize == n1
         end
         # Filter out all lowercase small names
-        next if w1.size < 4 and w1 == w1.downcase
+        next if w1.size < 4 and w1 == w1.downcase and w1 !~ /\d/
         # Remove brackets and braces in first and last positions
         add(tokens,w1) if TextParser.valid_token?(word)
         # p [word,w1,TextParser.valid_token?(word)]

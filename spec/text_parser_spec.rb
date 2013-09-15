@@ -34,7 +34,7 @@ TEXT
   end
 
   BUF2 =<<TEXT2
-  valid token figure S11 table XX
+  valid token figure S11 table XX p53
   Invalid MD, and RD Jester, Wikkel W, Wokkel WOS 
 TEXT2
 
@@ -44,6 +44,7 @@ TEXT2
     assert !match['S11']
     assert !match['XX']
     assert !match['Wokkel']
+    assert match['p53']
     assert match['WOS']
     assert !match['MD']
     assert !match['Invalid']
