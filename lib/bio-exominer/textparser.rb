@@ -53,7 +53,7 @@ module BioExominer
         w1 = rm_punctuation(word)
         n1 = rm_punctuation(list[idx+1]) if idx<list.size
         next if w1.size < 2
-        next if p1 =~ /table|dataset|supplement|figure/i 
+        next if p1 =~ /table|dataset|supplement|figure|chapter|section|paragraph/i 
         # Filter out letters+name
         if w1 =~ /^[A-Z]/ and w1.capitalize == w1
           next if n1 and n1.size == 1
