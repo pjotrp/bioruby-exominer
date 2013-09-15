@@ -127,7 +127,7 @@ begin
   $stderr.print "\nLoading text..."
   buf = ARGF.read
   $stderr.print "\nTokenizing..."
-  tokens = TextParser::tokenize(buf)
+  tokens,context = TextParser::tokenize_with_context(buf)
 
   symbol_count = 0
   alias_count = 0
@@ -200,6 +200,7 @@ HEADER
   
     write_symbol_rdf = lambda { |symbol,freq,is_alias=false| 
       match_info = info[symbol]
+      match_context = context[symbol].join(" ")
       symbol1 = match_info[:symbol] 
       symboluri = Symbols::uri(symbol1,hugo)
       symbolidentifier = RDF::make_identifier(symbol1)
@@ -210,6 +211,7 @@ HEADER
       print ":#{symbolref} :textmatch \"#{symbol}\" .\n" 
       print ":#{symbolref} dc:partOf :#{name} .\n"
       print ":#{symbolref} :frequency #{freq} .\n"
+      print ":#{symbolref} :context \"#{match_context}\" .\n"
       print "#{symboluri} rdf:label \"#{symboluri}\" .\n"
       print "#{symboluri} rdf:comment \"#{info[symbol][:descr]}\" .\n"
       print "\n"
