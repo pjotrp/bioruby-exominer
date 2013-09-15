@@ -51,6 +51,10 @@ module BioExominer
       end
       tokens
     end
+
+    # Return tokens with their context
+    def TextParser::tokenize_with_context buf
+    end
   end
 
 end

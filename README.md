@@ -328,6 +328,10 @@ how to contribute, see
 
   http://github.com/pjotrp/bioruby-exominer
 
+## TODO
+
+* Fix doi to make full URI
+
 ## Cite
 
 If you use this software, please cite one of
