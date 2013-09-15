@@ -15,8 +15,8 @@ module BioExominer
 
     def TextParser::valid_token? token
       return false if token.strip == "" 
-      return false if token =~ /^(\d|[,.])+$/
-      return false if token =~ /\W/  # at least one word char
+      return false if token =~ /^(\d|[,])+$/
+      return false if token !~ /[a-zA-Z]/  # at least one word char
       true
     end
 
@@ -27,9 +27,10 @@ module BioExominer
       tokens[word] += 1
     end
 
+    # Return tokens with count
     def TextParser::tokenize buf
       tokens = {}
-      buf.split(/[\r\s\/.,:]+/).each do | word |
+      buf.split(/[\r\s\/!,:]+/).each do | word |
         w1 = word
         # Remove brackets and braces in first and last positions
         add(tokens,w1) if TextParser.valid_token?(word)
@@ -38,9 +39,10 @@ module BioExominer
         end
         word = word.sub(/^\(/,'')
         word = word.sub(/\)$/,'')     
-        word = word.sub(/[.,:;]$/,'') # remove punctuation
+        word = word.sub(/[,:;]$/,'') # remove punctuation
         word = word.sub(/^[`"']/,'')  # remove starting quotes
         word = word.sub(/[`"']$/,'')  # remove ending quotes
+        # p [word,w1,TextParser.valid_token?(word)]
         add(tokens,word) if TextParser.valid_token?(word) and word != w1
         # split on dash or underscore
         if word =~ /-|_/
@@ -52,8 +54,23 @@ module BioExominer
       tokens
     end
 
-    # Return tokens with their context
+    # Return a list of tokens with count and context
     def TextParser::tokenize_with_context buf
+      tokens_context = {}
+      tokens_count = {}
+      # Split buf into sentences
+      sentences = buf.split(/\.\s+/)
+      sentences.each do | sentence1 |
+        sentence = sentence1.strip.gsub(/(\r|\n)\s*/,' ') 
+        tokens = tokenize(sentence)
+        tokens.each { | token, count |
+          tokens_count[token] ||= 0
+          tokens_count[token] += count
+          tokens_context[token] ||= []
+          tokens_context[token] << sentence
+        }
+      end
+      return tokens_count, tokens_context
     end
   end
 
