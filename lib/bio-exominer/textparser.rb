@@ -77,7 +77,7 @@ module BioExominer
           end
         end
       end
-      p tokens
+      # p tokens
       tokens
     end
 
