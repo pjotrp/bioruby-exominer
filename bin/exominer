@@ -117,6 +117,7 @@ begin
   name = options[:tags][:name] if not name and options[:tags] and options[:tags][:name]
   name = doi if not name and doi
   name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
+  give_context = options[:tags][:context] != 'false'
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
@@ -211,7 +212,7 @@ HEADER
       print ":#{symbolref} :textmatch \"#{symbol}\" .\n" 
       print ":#{symbolref} dc:partOf :#{name} .\n"
       print ":#{symbolref} :frequency #{freq} .\n"
-      print ":#{symbolref} :context \"#{match_context.encode("UTF-8").encode(:xml => :text)}\" .\n"
+      print ":#{symbolref} :context \"#{match_context.encode("UTF-8").encode(:xml => :text)}\" .\n" if give_context
       print "#{symboluri} rdf:label \"#{symboluri}\" .\n"
       print "#{symboluri} rdf:comment \"#{info[symbol][:descr]}\" .\n"
       print "\n"
