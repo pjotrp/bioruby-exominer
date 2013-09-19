@@ -90,6 +90,8 @@ module BioExominer
       sentences = buf.split(/\.\s+/)
       sentences.each do | sentence1 |
         sentence = sentence1.strip.gsub(/(\r|\n)\s*/,' ') 
+        # remove quotes
+        sentence = sentence.gsub(/"/,'')
         tokens = tokenize(sentence)
         tokens.each { | token, count |
           # shorten the sentence

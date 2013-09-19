@@ -12,7 +12,7 @@ class TestTextParser < MiniTest::Test
   Fish the token out of a very long sentence
   Fish the token out of a very long sentence
   Fish the token out of a very long sentence
-  Fish the token GEN2.X out of a very long sentence
+  Fish the token "GEN2.X" out of a very long sentence
   Fish the token out of a very long sentence
   Fish the token out of a very long sentence
   Fish the token out of a very long sentence
