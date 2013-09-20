@@ -10,7 +10,7 @@ module BioExominer
       type gene pmc but is ten org we an term not as by lost et out how up per for
       end beta der The Ten Out At No How pdf Ding Jan To cell gov even Jun
       Sun DNA Nat in hit doc bin with set Nov unknown key link to cgi
-      and or
+      and or RDF NPG
     }
 
     # L3MBTL
