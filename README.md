@@ -262,6 +262,25 @@ with the --name switch. E.g.
 
   exominer --rdf --name tcga_bc -s ncbi_symbols.tab --hugo hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
 
+## Context
+
+When a gene name gets mined from a text, it is nice to see where it is
+coming from. exominer provides context for this reason by including
+the text around the gene name with every reference. This is also a
+great way to weed out false positives! If the context for a gene named
+SE says: 'Department of Oncology, Lund University, SE-221 85 Lund,
+Sweden' - you may think twice about including it into your design.
+Computers are not very good at automated text mining. The human eye
+can pick these mistakes up quickly, exominer makes use the human
+capability. The RDF output contains this context by default. To switch
+context off, simply you can either add a CLI switch, or pass in a tag
+saying 'context=false'.
+
+One extra (interesting) facility for context is the --context=line
+command. This will set the context to the full line in a text file
+(from LF to LF). This can be very useful when parsing tabular
+data (Excel dumps, for example).
+
 ## Vocabularies
 
 In addition to the standard W3C vocabularies, exominer uses the

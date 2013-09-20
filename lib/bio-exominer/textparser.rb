@@ -83,7 +83,7 @@ module BioExominer
     end
 
     # Return a list of tokens with count and context
-    def TextParser::tokenize_with_context buf
+    def TextParser::tokenize_with_context buf, context_type = :normal
       tokens_context = {}
       tokens_count = {}
       # Split buf into sentences

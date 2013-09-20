@@ -54,6 +54,9 @@ opts = OptionParser.new do |o|
   o.on("-i","--ignore fn", 'Ignore symbols in fn (NYI)') do |fn|
     options[:ignore] = fn
   end
+  o.on("--context [TYPE]",[:off,:line], 'Context parser mode (off,line)') do |context|
+    options[:context] = context
+  end
   o.on("--doi doi", 'DOI') do |doi|
     options[:doi] = doi
   end
@@ -117,7 +120,7 @@ begin
   name = options[:tags][:name] if not name and options[:tags] and options[:tags][:name]
   name = doi if not name and doi
   name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
-  give_context = options[:tags][:context] != 'false'
+  give_context = options[:tags][:context] != :off
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
@@ -128,7 +131,8 @@ begin
   $stderr.print "\nLoading text..."
   buf = ARGF.read
   $stderr.print "\nTokenizing..."
-  tokens,context = TextParser::tokenize_with_context(buf)
+  tokens,context =
+  TextParser::tokenize_with_context(buf,options[:tags][:context])
 
   symbol_count = 0
   alias_count = 0
