@@ -83,11 +83,16 @@ module BioExominer
     end
 
     # Return a list of tokens with count and context
-    def TextParser::tokenize_with_context buf, context_type = :normal
+    def TextParser::tokenize_with_context buf, context_type = :sentence
       tokens_context = {}
       tokens_count = {}
-      # Split buf into sentences
-      sentences = buf.split(/\.\s+/)
+      # Split buf into sentences based on dots or newlines
+      sentences = 
+        if context_type == :line or context_type == 'line'
+          buf.split(/\n/)
+        else
+          buf.split(/\.\s+/)
+        end
       sentences.each do | sentence1 |
         sentence = sentence1.strip.gsub(/(\r|\n)\s*/,' ') 
         # remove quotes

@@ -31,6 +31,9 @@ TEXT
     assert_equal match['context'], ['This is with context! I don\'t believe this is true, and that you can do this']
     assert_equal match['GEN1.X'], ['Test gene GEN1.X']
     assert_equal match['GEN2.X'], ['Fish the token out of a very long sentence Fish the token GEN2.X out of a very long sentence Fish the token out of a']
+    # ---- Line based context
+    counts,match = TextParser::tokenize_with_context(BUF,context=:line)
+    assert_equal match['GEN2.X'], ['Fish the token GEN2.X out of a very long sentence']
   end
 
   BUF2 =<<TEXT2

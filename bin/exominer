@@ -117,10 +117,13 @@ begin
   # Create unique name for the resultset
   doi  = options[:doi]
   name = options[:name]
-  name = options[:tags][:name] if not name and options[:tags] and options[:tags][:name]
+  name = options[:tags][:name].to_sym if not name and options[:tags] and options[:tags][:name]
   name = doi if not name and doi
   name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
-  give_context = options[:tags][:context] != :off
+  give_context = options[:context] != :off
+
+  # context may be override by tags
+  options[:context]=options[:tags][:context] if options[:tags][:context]
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
@@ -132,7 +135,7 @@ begin
   buf = ARGF.read
   $stderr.print "\nTokenizing..."
   tokens,context =
-  TextParser::tokenize_with_context(buf,options[:tags][:context])
+  TextParser::tokenize_with_context(buf,options[:context])
 
   symbol_count = 0
   alias_count = 0
