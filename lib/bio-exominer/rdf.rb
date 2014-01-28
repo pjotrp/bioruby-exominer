@@ -2,6 +2,7 @@ module BioExominer
 
 require 'uri'
 
+  # FIXME: use bioruby-rdf modules instead! It is all there now.
   module RDF
 
     def RDF::valid_uri? uri

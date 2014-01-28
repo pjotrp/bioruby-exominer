@@ -23,7 +23,7 @@ module BioExominer
         else
           aliases.split(/\|/)
         end
-      return symbol,aliases,descr.strip
+      return symbol,aliases,(descr ? descr.strip : "")
     end
 
     def Symbols::each(fn)

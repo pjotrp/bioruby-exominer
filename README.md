@@ -2,22 +2,25 @@
 
 [![Build Status](https://secure.travis-ci.org/pjotrp/bioruby-exominer.png)](http://travis-ci.org/pjotrp/bioruby-exominer)
 
-Exominer helps build a list of genes that may be used for building a
-targeted exome design for sequencing. The inputs are a list of Pubmed
-IDs with text files (PDF, HTML, Word, Excel have to be exported to
-plain text first). Exominer harvests gene names from these documents
-using a default symbol list with aliases. 
-Ideally, all texts only contain HUGO symbols, the over 30K standardized
-gene names by the HUGO Gene Nomenclature Committee (HGNC). Exominer
-does that, but it also mines for the 12 odd million symbols and aliases that
-are known through NCBI.
+Exominer helps build a list of genes from publications.
 
-All matches are written with their sources, symbol frequencies,
+Such a gene list may be used for identifying candidate genes connected to 
+a specific disease, but also may be used to compile a targeted
+exome design for sequencing. 
+
+The inputs for Exominer are a list of Pubmed IDs with text files (PDF, HTML,
+Word, Excel have to be exported to plain text first).  Exominer harvests gene
+names from these documents using a default symbol list with aliases.  Ideally,
+all texts only contain HUGO symbols, the over 30K standardized gene names by
+the HUGO Gene Nomenclature Committee (HGNC).  Exominer also mines for the 12
+odd million symbols and aliases that are known through NCBI.
+
+All matches are written with their sources, symbol frequencies, publication
 year, and user provided keywords and impact scores and written out.
 
 Exominer also exports to RDF, so that the gene symbols can be stored
 into a triple-store and link out to Bio2rdf resources.  The latter
-allows harvesting pathways.
+allows harvesting of pathways.
 
 Every RDF export contains full information on the origin of symbols.
 Over time designs can be compared against each other and a historical
@@ -25,9 +28,9 @@ record is maintained. It is a good idea to store the textual versions
 of the files too.
 
 The initial symbol list with aliases can be fetched/generated from external
-sources, such as NCBI, Biomart and/or Bio2rdf. Some example scripts
-are in ./scripts. For a more specific treatment of design and
-input/output of exominer, see ./doc/design.md.
+sources, such as NCBI, Biomart and/or Bio2rdf. Some examples are listed in this
+README and related scripts are in ./scripts. For a more specific treatment of
+design and input/output of exominer, see ./doc/design.md.
 
 Questions to ask from the RDF 
 
@@ -86,15 +89,25 @@ it as HTML or text to 'paper.txt'
 
 NCBI provides a current list of all NCBI used symbols in one large file at
 
-  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz.
+  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
+  gzip -d gene_info.gz
 
-Fetch this file and unpack it. Note: this is a 1.4Gb file; do not
+Fetch this file and unpack it. Note: unpacked this is a 1.4Gb file; do not
 check this file into the repository! Create the symbol/alias list for
 exominer with
 
   ncbi_exominer_symbols gene_info > ncbi_symbols.tab
 
-That makes for some 12 million symbols + aliases(!)
+That makes for some 14 million symbols + aliases(!). 
+
+The ncbi_symbols.tab file contains entries, synonyms and descriptsions, such as
+
+  repA1   pLeuDn_01       putative replication-associated protein
+  repA2   pLeuDn_03       putative replication-associated protein
+  leuA    pLeuDn_04       2-isopropylmalate synthase
+  leuB    pLeuDn_05       3-isopropylmalate dehydrogenase
+
+You can remove the original gene_info file again after generating the ncbi_symbols file.
 
 Next to the ncbi_symbols.tab file a frequency file is generated named
 ncbi_exominer_symbols.freq, which contains the frequency of every
@@ -116,14 +129,14 @@ In this list some gene symbols and gene names include dashes and dots
 and other characters. Some gene names even contain spaces - we skip
 these for further processing.
 
-The millions of NCBI symbols and aliases we do not all write to a
-triple-store. We only store those symbols that get mined from the
+Later, the millions of NCBI symbols and aliases do not all write to a
+triple-store. Only those symbols get stored that are mined from the
 documents. 
 
 ### Adding HUGO symbols and aliases
 
-To make sure all recent HUGO symbols are added, download the all symbols file
-and parse it through 
+To make sure all recent HUGO symbols are added, download the HUGO symbols file
+from EBI and parse that
 
 ```sh
   wget ftp://ftp.ebi.ac.uk/pub/databases/genenames/reference_genome_set.txt.gz
@@ -131,8 +144,14 @@ and parse it through
   hugo_exominer_symbols reference_genome_set.txt > hugo_symbols.tab
 ```
 
-A HUGO file is included with the gem (in test/data/input/hugo_symbols) and will be
-loaded if you use the --hugo switch without specifying a symbol file. 
+The hugo_symbols.tab is included with the gem (in test/data/input/hugo_symbols) and will
+always be loaded if you use the --hugo switch without specifying a symbol file. It contains 
+entries, synonyms and discriptions, such as
+
+  ERAP2 L-RAP|LRAP  endoplasmic reticulum aminopeptidase 2
+  ERAS  HRAS2|HRASP ES cell expressed Ras
+  ERBB2 NEU|HER-2|CD340|HER2|NGL  v-erb-b2 avian erythroblastic leukemia viral oncogene homolog 2
+  ERBB2IP ERBIN|LAP2  erbb2 interacting protein
 
 ### Making a text file of your document
 
@@ -142,7 +161,7 @@ example of a textual version of an online Nature paper can be made with
 
   lynx --dump http://www.nature.com/nature/journal/v490/n7418/full/nature11412.html >> tcga_bc.txt
 
-Warning: do not check this file into the repository! Nature publishing
+Warning: do not check this file into any public repository! Nature publishing
 group will not be amused.
 
 ### Using Exominer to mine a text file for symbols
@@ -169,7 +188,7 @@ their tally. For example
     43      ATM     hypothetical protein
     90      can     carbonic anhydrase 2 Can
 
-  Out of a total of 12,774,630 symbols and 3,201,281 aliases scanned(!)
+  Out of a total of 12,774,630 symbols and 3,201,281 aliases scanned
 
 This is not an authorative list but because it is such a comprehensive
 list of symbols and aliases there should be few false negatives.
@@ -184,9 +203,13 @@ yet implemented/NYI):
 where list.tab contains a list of symbols to ignore. These symbols
 *with* their aliases are skipped in the text mining step. 
 
-This can be useful when mining a paper at a time. The better route,
-however, is by adding the exome list and accompanying design to a
-triple store for further exploration.
+This can be useful when mining a paper at a time. Mulitible papers is better,
+because there will be more evidence on gene names and symbols. Exominer can
+export results to RDF for powerful querying. More on that below.
+
+Also when you have an existing exome design, is is possible to add
+a prepared exome list and accompanying design to an
+RDF triple store for further exploration.
 
 ## Speeding up text search
 
