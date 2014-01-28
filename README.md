@@ -323,9 +323,9 @@ Instructions for installing [4store](http://4store.org/) can be found on
 a new triple-store with
 
 ```sh
-4s-backend-setup design
-4s-backend design
-4s-httpd -p 8081 design
+4s-backend-setup exominer
+4s-backend exominer
+4s-httpd -p 8081 exominer
 ```
 
 and check the webserver is running on http://localhost:8081/status/.
