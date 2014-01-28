@@ -149,6 +149,7 @@ begin
   $stderr.print "\nParse symbol files..."
   parse_symbols = lambda { |symbolfn,is_hugo=false|  
     # ---- for every symbol file
+    $stderr.print "\nParse symbol file #{symbolfn}..."
     Symbols::each(symbolfn) do | symbol,aliases,descr |
       # ---- for every symbol and aliases
       # $stderr.print "\nHUGO-"+symbol if symbol =~ /L3MBTL/
