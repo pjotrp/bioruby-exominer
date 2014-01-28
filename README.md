@@ -222,7 +222,7 @@ and rename that file to
 
   mv symbols.bin ncbi_symbols.bin
 
-Now use the bin version with exominer's -s switch.
+Now use the bin file instead with exominer's -s switch.
 
 ## Using exominer with a triple-store
 
@@ -266,11 +266,11 @@ title and year:
 multiple tags are also allowed.
 
 exominer generates RDF which can be added to a triple-store. If you
-want to add a design (old or new) simply use something like
+want to add a design (old or new) treat it as a publication and use something like
 
   exominer --rdf --hugo hugo_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
 
-These commands create turtle RDF with the --rdf switch. Simply pipe
+These commands create turtle RDF with the --rdf switch. Pipe
 the output into the triple-store with
 
   curl -T file.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/exominer.rdf
@@ -293,9 +293,10 @@ the text around the gene name with every reference. This is also a
 great way to weed out false positives! If the context for a gene named
 SE says: 'Department of Oncology, Lund University, SE-221 85 Lund,
 Sweden' - you may think twice about including it into your design.
-Computers are not very good at automated text mining. The human eye
-can pick these mistakes up quickly, exominer makes use the human
-capability. The RDF output contains this context by default. To switch
+
+Computers are not always good at automated text mining. The human eye
+can pick these mistakes up quickly, exominer makes use of human
+recognition. The RDF output contains this context by default. To switch
 context off, simply you can either add a CLI switch, or pass in a tag
 saying 'context=false'.
 
