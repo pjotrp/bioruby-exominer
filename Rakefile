@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "bio-exominer"
   gem.homepage = "http://github.com/pjotrp/bioruby-exominer"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Mine publications for gene names}
+  gem.description = %Q{Parse publications for gene names in a fuzzy fashion}
   gem.email = "pjotr.public01@thebird.nl"
   gem.authors = ["Pjotr Prins"]
   # dependencies defined in Gemfile
