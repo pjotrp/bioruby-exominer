@@ -8,19 +8,23 @@ Such a gene list may be used for identifying candidate genes connected to
 a specific disease, but also may be used to compile a targeted
 exome design for sequencing. 
 
-The inputs for Exominer are a list of Pubmed IDs with text files (PDF, HTML,
-Word, Excel have to be exported to plain text first).  Exominer harvests gene
-names from these documents using a default symbol list with aliases.  Ideally,
-all texts only contain HUGO symbols, the over 30K standardized gene names by
-the HUGO Gene Nomenclature Committee (HGNC).  Exominer also mines for the 12
-odd million symbols and aliases that are known through NCBI.
+The inputs for Exominer are a list of Pubmed IDs with text files (PDF,
+HTML, Word, Excel have to be exported to plain text first).  Exominer
+harvests gene names from these documents using a default symbol list
+with aliases.  Ideally, all texts would only contain HUGO symbols,
+i.e. the over 30K standardized gene names by the HUGO Gene
+Nomenclature Committee (HGNC). In reality, scientific authors take
+liberties and the search for names is 'fuzzy'. Therefore the search
+for Exominer also mines for the 12 odd million symbols and aliases
+that are known through NCBI.
 
-All matches are written with their sources, symbol frequencies, publication
-year, and user provided keywords and impact scores and written out.
+All matches are written with their sources, symbol frequencies,
+publication year, and user provided keywords and impact scores and
+written out.
 
 Exominer also exports to RDF, so that the gene symbols can be stored
-into a triple-store and link out to Bio2rdf resources.  The latter
-allows harvesting of pathways.
+into a triple-store graph database and link out to Bio2rdf resources.
+The latter allows, for example, harvesting of pathways.
 
 Every RDF export contains full information on the origin of symbols.
 Over time designs can be compared against each other and a historical
@@ -52,11 +56,11 @@ When linking out to TCGA and bio2rdf we can get mutation information and gene si
 * Give mutations of genes and their sizes of those listed in a paper 
 * Give mutations of genes and their sizes of those listed in a design
 
-The TCGA (maf) data is provided by Will's publisci RDF. We can ask
+The TCGA (maf) data was provided by Will's Ruby publisci RDF module. We can ask
 patient related questions
 
-* How many patients are in the database?
-* How many patients per tumor type?
+* How many patients are in the TCGA database?
+* How many patients are in the TCGA per tumor type?
 
 And mutation related questions
 
@@ -92,8 +96,8 @@ NCBI provides a current list of all NCBI used symbols in one large file at
   ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
   gzip -d gene_info.gz
 
-Fetch this file and unpack it. Note: unpacked this is a 1.4Gb file; do not
-check this file into the repository! Create the symbol/alias list for
+Fetch this file and unpack. Note: unpacked this is a 1.4Gb file; do not
+check this file into a github repository! Create the symbol/alias list for
 exominer with
 
   ncbi_exominer_symbols gene_info > ncbi_symbols.tab
@@ -388,5 +392,5 @@ This Biogem is published at (http://biogems.info/index.html#bio-exominer)
 
 ## Copyright
 
-Copyright (c) 2013 Pjotr Prins. See LICENSE.txt for further details.
+Copyright (c) 2013,2014 Cuppen Group and Pjotr Prins. See LICENSE.txt for further details.
 
