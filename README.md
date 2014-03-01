@@ -110,23 +110,27 @@ it as HTML or text to 'paper.txt'
 
 NCBI provides a current list of all NCBI used symbols in one large file at
 
-  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
+```sh
+  wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
   gzip -d gene_info.gz
+```
 
 Fetch this file and unpack. Note: unpacked this is a 1.4Gb file; do not
 check this file into a github repository! Create the symbol/alias list for
 exominer with
 
+```sh
   ncbi_exominer_symbols gene_info > ncbi_symbols.tab
+```
 
 That makes for some 14 million symbols + aliases(!). 
 
 The ncbi_symbols.tab file contains entries, synonyms and descriptsions, such as
 
-  repA1   pLeuDn_01       putative replication-associated protein
-  repA2   pLeuDn_03       putative replication-associated protein
-  leuA    pLeuDn_04       2-isopropylmalate synthase
-  leuB    pLeuDn_05       3-isopropylmalate dehydrogenase
+    repA1   pLeuDn_01       putative replication-associated protein
+    repA2   pLeuDn_03       putative replication-associated protein
+    leuA    pLeuDn_04       2-isopropylmalate synthase
+    leuB    pLeuDn_05       3-isopropylmalate dehydrogenase
 
 You can remove the original gene_info file again after generating the ncbi_symbols file.
 
@@ -134,17 +138,17 @@ Next to the ncbi_symbols.tab file a frequency file is generated named
 ncbi_exominer_symbols.freq, which contains the frequency of every
 character used in symbol names:
 
-  p: 1255137
-  L: 1907635
-  e: 1334974
-  u: 465711
-  D: 2110781
-  n: 533637
-  _: 11942258
+    p: 1255137
+    L: 1907635
+    e: 1334974
+    u: 465711
+    D: 2110781
+    n: 533637
+    _: 11942258
 
 and a list of all characters
 
-   "#%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_`abcdefghijklmnopqrstuvwxyz{}
+    "#%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_`abcdefghijklmnopqrstuvwxyz{}
 
 In this list some gene symbols and gene names include dashes and dots
 and other characters. Some gene names even contain spaces - we skip
@@ -169,10 +173,10 @@ The hugo_symbols.tab is included with the gem (in test/data/input/hugo_symbols) 
 always be loaded if you use the --hugo switch without specifying a symbol file. It contains 
 entries, synonyms and discriptions, such as
 
-  ERAP2 L-RAP|LRAP  endoplasmic reticulum aminopeptidase 2
-  ERAS  HRAS2|HRASP ES cell expressed Ras
-  ERBB2 NEU|HER-2|CD340|HER2|NGL  v-erb-b2 avian erythroblastic leukemia viral oncogene homolog 2
-  ERBB2IP ERBIN|LAP2  erbb2 interacting protein
+    ERAP2 L-RAP|LRAP  endoplasmic reticulum aminopeptidase 2
+    ERAS  HRAS2|HRASP ES cell expressed Ras
+    ERBB2 NEU|HER-2|CD340|HER2|NGL  v-erb-b2 avian erythroblastic leukemia viral oncogene homolog 2
+    ERBB2IP ERBIN|LAP2  erbb2 interacting protein
 
 ### Making a text file of your document
 
