@@ -9,9 +9,9 @@ gem 'msgpack'
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "minitest", "~> 5.0.7" 
-  gem "rspec", "~> 2.8.0"
-  gem "rdoc", "~> 3.12"
-  gem "cucumber", ">= 0"
-  gem "jeweler", "~> 1.8.4", :git => "https://github.com/technicalpickles/jeweler.git"
-  gem "bundler", ">= 1.0.21"
+  gem "rspec"
+  gem "cucumber"
+  gem "bundler"
+  gem "jeweler", "~> 2.0.0"
+  gem "rdoc"
 end
