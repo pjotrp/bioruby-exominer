@@ -1,0 +1,74 @@
+#! /usr/bin/env ruby
+#
+# Convert NCBI gene_info to symbol file and calculate used letter
+# frequencies. Note: all symbols that are numbers are removed.
+#
+# Copyright (C) 2013 Pjotr Prins <pjotr.prins@thebird.nl> 
+#
+
+require 'yaml'
+
+# Returns true or false
+def valid_symbol s
+  s = s.strip
+  return false if s =~ /^\d+$/  # drop all digit id's
+  $stderr.print "Symbol contains a space! <"+s+">\n" if s =~ /\s/
+  true
+end
+
+module Freq
+  def Freq::to_s freq
+    buf = freq.to_yaml + "\n"
+    freq.keys.sort.each do |c|
+      buf += c
+    end
+    buf
+  end
+end
+
+freq = {}
+
+counter = 0
+
+ARGF.each_line do | line |
+  counter += 1
+  $stderr.print "." if counter % 10_000 == 0
+
+  next if line =~ /^HGNC ID/
+  a = line.strip.split(/\t/)
+  symbol = a[1]
+  next if not valid_symbol(symbol)
+  name = a[2]
+  oldnames = nil
+  oldnames = a[4].strip.split(/\s?,\s?/) if a.size > 4
+  aliases = nil
+  aliases = a[6].strip.split(/\s?,\s?/) if a.size > 6
+  # p [a[4],a[6]]
+  as = []
+  as = aliases if aliases
+  as += oldnames if oldnames
+  as.reject! { |c| c.empty? }
+  aliases = if as.size == 0
+              'NA'
+            else
+              as.uniq.join('|')
+            end
+  descr = a[2]
+  descr = '' if descr == '-'
+  print symbol,"\t",aliases,"\t",descr,"\n"
+  # Add stats
+  cs = symbol.scan(/./)
+  if aliases != 'NA'
+    cs += aliases.scan(/./) - ['|']
+  end
+  cs.each do |c|
+    freq[c] = 0 if not freq[c]
+    freq[c] += 1
+  end
+end
+
+File.open('hugo_exominer_symbols.freq','w') do |f|
+  f.print(Freq::to_s(freq))
+end
+
+
