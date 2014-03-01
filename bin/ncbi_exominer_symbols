@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby
 #
-# Convert NCBI gene_info to symbol file and calculate used letter
+# Convert HUGO gene_info to symbol file and calculate used letter
 # frequencies. Note: all symbols that are numbers are removed.
 #
 # Copyright (C) 2013 Pjotr Prins <pjotr.prins@thebird.nl> 
@@ -62,7 +62,7 @@ ARGF.each_line do | line |
   descr = '' if descr == '-'
   print symbol,"\t",aliases,"\t",descr,"\n"
   # Add stats
-  cs = name.scan(/./)
+  cs = symbol.scan(/./)
   if aliases != 'NA'
     cs += aliases.scan(/./) - ['|']
   end

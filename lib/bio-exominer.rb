@@ -8,5 +8,7 @@
 #
 # In this file only require other files. Avoid other source code.
 
-require 'bio-exominer/exominer.rb'
+require 'bio-exominer/rdf'
+require 'bio-exominer/textparser'
+require 'bio-exominer/exominer'
 

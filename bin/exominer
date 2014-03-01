@@ -15,7 +15,7 @@ VERSION_FILENAME=File.join(gempath,'VERSION')
 version = File.new(VERSION_FILENAME).read.chomp
 
 # print banner
-print "exominer #{version} (biogem Ruby #{RUBY_VERSION}) by Pjotr Prins 2013\n"
+$stderr.print "exominer #{version} (biogem Ruby #{RUBY_VERSION}) by Pjotr Prins 2013\n"
 
 if ARGV.size == 0
   print USAGE
@@ -31,14 +31,45 @@ require 'optparse'
 # Bio::Log::CLI.logger('stderr')
 # Bio::Log::CLI.trace('info')
 
-options = {:show_help=>false}
+options = { show_help: false, symbols: []}
 opts = OptionParser.new do |o|
-  o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g. #{File.basename($0)} -s ncbi_symbols.tab < test.txt"
+  o.banner = "Usage: #{File.basename($0)} [options] filename\ne.g.  #{File.basename($0)} -s ncbi_symbols.tab --rdf < test.txt"
 
-  o.on("-s fn","--symbols fn", 'Symbol file') do |fn|
-    options[:symbols] = fn
+  o.on("--rdf", "Generate RDF") do |b|
+    options[:rdf] = true
   end
-
+  o.on("--name name", 'Set name of result set') do |name|
+    options[:name] = name
+  end
+  o.on("-s","--symbols fn", 'Symbol file') do |fn|
+    options[:symbols] += [fn]
+  end
+  o.on("--hugo [fn]", 'Hugo symbol file') do |fn|
+    if fn
+      options[:hugo] = fn
+    else
+      options[:hugo] = gempath + '/test/data/input/hugo_symbols'
+    end
+  end
+  o.on("-i","--ignore fn", 'Ignore symbols in fn (NYI)') do |fn|
+    options[:ignore] = fn
+  end
+  o.on("--context [TYPE]",[:off,:line], 'Context parser mode (off,line)') do |context|
+    options[:context] = context
+  end
+  o.on("--doi doi", 'DOI') do |doi|
+    options[:doi] = doi
+  end
+  o.on("--tag string", 'Tag string') do |tag|
+    tags = {}
+    ts = tag.split(/\s?;\s?/)
+    ts.each do |field|
+      key,value = field.strip.split(/\s?=\s?/)
+      tags[key.to_sym] = value
+    end
+    options[:tags] = tags
+  end
+  
   # Uncomment the following when using the bio-logger 
   # o.separator ""
   # o.on("--logger filename",String,"Log to file (default stderr)") do | name |
@@ -76,9 +107,23 @@ include BioExominer
 begin
   opts.parse!(ARGV)
 
-  print opts if options[:show_help]
+  if options[:show_help]
+    print opts 
+    exit 1
+  end
 
-  p options
+  $stderr.print options
+
+  # Create unique name for the resultset
+  doi  = options[:doi]
+  name = options[:name]
+  name = options[:tags][:name].to_sym if not name and options[:tags] and options[:tags][:name]
+  name = doi if not name and doi
+  name = rand(36**8).to_s(36) if not name # finally a random ID, if nothing else works
+  give_context = options[:context] != :off
+
+  # context may be override by tags
+  options[:context]=options[:tags][:context] if options[:tags][:context]
 
   # Uncomment when using the bio-logger
   # Bio::Log::CLI.configure('exominer')
@@ -86,45 +131,120 @@ begin
   # Log parsed options and remaining arguments in ARGV
   # logger.info [options, ARGV]
 
-  print "\nLoading text and tokenizing..."
+  $stderr.print "\nLoading text..."
   buf = ARGF.read
-  tokens = TextParser::tokenize(buf)
+  $stderr.print "\nTokenizing..."
+  tokens,context =
+  TextParser::tokenize_with_context(buf,options[:context])
 
   symbol_count = 0
   alias_count = 0
-  symbol_matches = {}
-  alias_matches = {}
-  info = {}
-  Symbols::each(options[:symbols]) do | symbol,aliases,descr |
-    # p [symbol,aliases,descr]
-    symbol_count += 1
-    alias_count += aliases.size if aliases
-    if tokens[symbol]
-      symbol_matches[symbol] ||= 0
-      symbol_matches[symbol] += 1
-      info[symbol] = { :symbol => symbol, :aliases => aliases, :descr => descr }
-    end  
-    if aliases
-      aliases.each do | word |
-        full = word + ' (' + symbol + ')'
-        if tokens[word]
-          alias_matches[word] ||= 0
-          alias_matches[word] += 1
-          info[word] = { :symbol => symbol, :aliases => aliases, :descr => descr }
+  hugo_count = 0
+  hugo_matches = {}
+  symbol_matches = {}   # match symbols
+  alias_matches = {}    # match aliases
+  info = {}             # the main symbol match tracker
+  hugo = {}             # HUGO tracker
+
+  $stderr.print "\nParse symbol files..."
+  parse_symbols = lambda { |symbolfn,is_hugo=false|  
+    # ---- for every symbol file
+    $stderr.print "\nParse symbol file #{symbolfn}..."
+    Symbols::each(symbolfn) do | symbol,aliases,descr |
+      # ---- for every symbol and aliases
+      # $stderr.print "\nHUGO-"+symbol if symbol =~ /L3MBTL/
+      hugo[symbol] = true if is_hugo
+      # alias_count += aliases.size if aliases
+      # ---- If the symbol has a match, and it is not in the list, add it
+      if tokens[symbol] and not info[symbol]
+        symbol_matches[symbol] = tokens[symbol]
+        hugo_matches[symbol] ||= true if is_hugo
+        info[symbol] = { :symbol => symbol, :is_hugo=>is_hugo, :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
+      end  
+      # ---- If an alias has a match and is not in the list, add it
+      if aliases
+        aliases.each do | word |
+          # $stderr.print "\n!!"+word+':'+symbol if word == "L3MBTL"
+          # full = word + ' (' + symbol + ')'
+          if tokens[word] and not info[word]
+            # $stderr.print "\n=="+word+':'+symbol if word == "L3MBTL"
+            hugo_matches[word] ||= true if hugo[word]
+            alias_matches[word] = tokens[word]
+            info[word] = { :symbol => symbol, :is_hugo=>hugo[word], :aliases => aliases, :descr => descr, :symbolfn => symbolfn }
+          end
         end
       end
     end
+  }
+
+  parse_symbols.call(options[:hugo],is_hugo = true) if options[:hugo]
+  options[:symbols].each { |fn| parse_symbols.call(fn) }
+
+  if options[:rdf]
+    # Write RDF!
+    print <<HEADER
+
+# RDF output by bio-exominer https://github.com/pjotrp/bioruby-exominer
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix hgnc: <http://identifiers.org/hgnc.symbol/> .
+@prefix doi: <http://dx.doi.org/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix ncbigene: <https://www.google.nl/search?q=ncbi+gene+alias+> .
+@prefix : <http://biobeat.org/rdf/exominer/ns#>  .
+
+HEADER
+
+    # Fix DOI with http://www.doi.org/doi_handbook/2_Numbering.html#2.6.2
+    print ":#{name} :doi \"doi:#{doi}\" . \n" if doi
+    print ":#{name} rdf:label \"#{name}\" . \n" 
+    print ":#{name} a \"text resource\" . \n" 
+    print ":#{name} dc:type \"#{options[:type]}\" . \n" if options[:type]
+    if options[:tags]
+      options[:tags].each do | k,v |
+        print ":#{name} :#{k.to_sym} \"#{v}\" .\n"
+      end
+    end
+    print "\n"
+  
+    write_symbol_rdf = lambda { |symbol,freq,is_alias=false| 
+      match_info = info[symbol]
+      match_context = context[symbol].join("; ")
+      symbol1 = match_info[:symbol] 
+      symboluri = Symbols::uri(symbol1,hugo)
+      symbolidentifier = RDF::make_identifier(symbol1)
+      symbol1 = symbolidentifier if not hugo[symbol1]
+      symbolref = name + '_' + symbol1
+      print ":#{symbolref} a #{symboluri} .\n" 
+      # print ":#{symbolref} :alias #{Symbols::uri(symbol,hugo)} .\n" if symbol1 != symbol
+      print ":#{symbolref} :textmatch \"#{symbol}\" .\n" 
+      print ":#{symbolref} dc:partOf :#{name} .\n"
+      print ":#{symbolref} :frequency #{freq} .\n"
+      print ":#{symbolref} :context \"#{match_context.encode("UTF-8").encode(:xml => :text)}\" .\n" if give_context
+      print "#{symboluri} rdf:label \"#{symboluri}\" .\n"
+      print "#{symboluri} rdf:comment \"#{info[symbol][:descr]}\" .\n"
+      print "\n"
+    }
+
+    alias_matches.each do | symbol, freq |
+      write_symbol_rdf.call(symbol,freq,is_alias=true) if not symbol_matches[symbol]
+    end
+    symbol_matches.each do | symbol, freq |
+      write_symbol_rdf.call(symbol,freq,is_alias=false)
+    end
+  else
+    print "\nMatching symbol aliases:\n"
+    alias_matches.sort_by{|k,v| v}.each do | k,v |
+      print v,"\t",(hugo[info[k][:symbol]]?" HUGO":""),"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n" if not symbol_matches[k]
+    end
+    print "\nMatching symbols:\n"
+    symbol_matches.sort_by{|k,v| v}.each do | k,v |
+      print v,"\t",(hugo[k]?" HUGO":""),"\t",k,"\t",info[k][:descr],"\n"
+    end
   end
-  print "\nMatching symbol aliases:\n"
-  alias_matches.sort_by{|k,v| v}.each do | k,v |
-    print v,"\t",k,"\t",info[k][:symbol],"\t",info[k][:descr],"\n"
-  end
-  print "\nMatching symbols:\n"
-  symbol_matches.sort_by{|k,v| v}.each do | k,v |
-    print v,"\t",k,"\t",info[k][:descr],"\n"
-  end
-  print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
-  print "\nDone!\n"
+  # $stderr.print "\nA total of #{symbol_count} symbols and #{alias_count} aliases scanned."
+  $stderr.print "\nThere were #{hugo_matches.size} HUGO matches out of #{hugo.size} symbols."
+  $stderr.print "\nDone!\n"
 rescue OptionParser::InvalidOption => e
   options[:invalid_argument] = e.message
 end
