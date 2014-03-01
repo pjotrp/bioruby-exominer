@@ -180,7 +180,9 @@ Save HTML/Word/Excel/PDF files in a textual format. Command line
 tools, such as lynx, antiword and pdftotext exist for this purpose. An
 example of a textual version of an online Nature paper can be made with
 
+```sh
   lynx --dump http://www.nature.com/nature/journal/v490/n7418/full/nature11412.html >> tcga_bc.txt
+```
 
 Warning: do not check this file into any public repository! Nature publishing
 group will not be amused.
@@ -189,7 +191,9 @@ group will not be amused.
 
 Pass the symbol file on the command line and pipe in the textual file, e.g.
 
+```sh
   exominer -s ncbi_symbols.tab --hugo hugo_symbols.tab < tcga_bc.txt 
+```
 
 This results in a list of symbols and aliases found in the paper, with
 their tally. For example
@@ -219,7 +223,9 @@ exome targets. So the possible next step (when not using using a
 triple-store) allows for subtracting symbols already in a design (not
 yet implemented/NYI):
 
+```sh
   exominer -s ncbi_symbols.tab --ignore list.tab < tcga_bc.txt
+```
 
 where list.tab contains a list of symbols to ignore. These symbols
 *with* their aliases are skipped in the text mining step. 
@@ -237,11 +243,15 @@ RDF triple store for further exploration.
 To speed things up you can create a binary version of the symbols
 table with
 
+```sh
   pack_exominer_symbols ncbi_symbols.tab
+```
 
 and rename that file to
 
+```sh
   mv symbols.bin ncbi_symbols.bin
+```
 
 Now use the bin file instead with exominer's -s switch.
 
@@ -268,43 +278,57 @@ the target of the publication, such as species or disease type.
 
 The DOI describing the file:
 
+```sh
   exominer --rdf -s ncbi_symbols.tab --hugo hugo_symbols.tab \
     --doi doi:10.1038/nature11412 < tcga_bc.txt 
+```
 
 allows for mining title and publication date for every
 symbol found. To add some meta information you could add semi-colon
 separated tags
 
+```sh
   exominer --rdf -s ncbi_symbols.tab --hugo hugo_symbols.tab \
     --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+```
 
 which helps mining data later on. If no doi exists, you may just add
 title and year:
 
+```sh
   exominer --rdf -s ncbi_symbols.tab --tag 'title=Comprehensive molecular portraits of human breast tumours' \
     --tag 'year=2012;species=human;type=breast cancer' < tcga_bc.txt 
+```
 
 multiple tags are also allowed.
 
 exominer generates RDF which can be added to a triple-store. If you
 want to add a design (old or new) treat it as a publication and use something like
 
+```sh
   exominer --rdf --hugo hugo_symbols.tab --tag 'design=Targeted exome;year=2013;' < design.txt
+```
 
 These commands create turtle RDF with the --rdf switch. Pipe
 the output into the triple-store with
 
+```sh
   curl -T file.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/exominer.rdf
+```
 
 The URI can be a little more descriptive, e.g.:
 
+```sh
   curl -T design2012.rdf -H 'Content-Type: application/x-turtle' http://localhost:8081/data/design2012.rdf
+```
 
 Finally, to support multiple searches and make it easier to
 dereference sources you can supply a unique name to each result set
 with the --name switch. E.g.
 
+```sh
   exominer --rdf --name tcga_bc -s ncbi_symbols.tab --hugo hugo_symbols.tab --doi doi:10.1038/nature11412 --tag 'species=human;type=breast cancer' < tcga_bc.txt 
+```
 
 ## Context
 
@@ -363,7 +387,7 @@ SELECT * WHERE { ?s ?p ?o }
 
 This can be run with the sparql-query tool
 
-```
+```sh
 sparql-query http://localhost:8081/sparql/ 'SELECT * WHERE { ?s ?p ?o } LIMIT 10'
 ```
 
